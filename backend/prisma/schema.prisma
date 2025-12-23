@@ -12,41 +12,30 @@ generator client {
 
 // Tabela de Categorias
 model Category {
-  id        String           @id
-  title     String
-  courses   CategoryCourse[]
+  id      String   @id
+  title   String
+  courses Course[]
 
   @@map("categories")
 }
 
-// Tabela de Cursos
+// Tabela de Cursos - Pertence a 1 Categoria
 model Course {
-  id          String           @id
+  id          String    @id
   name        String
   position    Int
   description String?
   image       String?
   url         String?
-  categories  CategoryCourse[]
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   sections    Section[]
   schedules   Schedule[]
 
   @@map("courses")
 }
 
-// Tabela de linkagem Categoria <-> Curso
-model CategoryCourse {
-  id         String   @id @default(uuid())
-  categoryId String
-  courseId   String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@unique([categoryId, courseId])
-  @@map("category_courses")
-}
-
-// Tabela de Sections (Módulos)
+// Tabela de Sections (Módulos) - Pertence a 1 Course
 model Section {
   id       String   @id
   name     String
@@ -59,7 +48,7 @@ model Section {
   @@map("sections")
 }
 
-// Tabela de Lessons (Aulas)
+// Tabela de Lessons (Aulas) - Pertence a 1 Section
 model Lesson {
   id            String         @id
   name          String
@@ -73,7 +62,7 @@ model Lesson {
   @@map("lessons")
 }
 
-// Tabela de Vídeos (associado a Lesson)
+// Tabela de Vídeos - Pertence a 1 Lesson (1:1)
 model Video {
   id       String  @id
   source   String?
