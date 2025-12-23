@@ -3,7 +3,7 @@ export interface MemberkitClassroomDTO {
   id: number;
   name: string;
   course_name: string;
-  user_count: number;
+  users_count: number;
   // Outros campos que a API retorna mas não vamos armazenar
   [key: string]: any;
 }
@@ -23,7 +23,7 @@ export class ClassroomMapper {
       id: memberkit.id,
       name: memberkit.name,
       courseName: memberkit.course_name,
-      userCount: memberkit.user_count,
+      userCount: memberkit.users_count,
     };
   }
 }
