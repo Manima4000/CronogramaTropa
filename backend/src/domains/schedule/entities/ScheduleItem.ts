@@ -1,8 +1,8 @@
 export class ScheduleItem {
   constructor(
-    public readonly id: string,
-    public scheduleId: string,
-    public lessonId: string,
+    public readonly id: number,
+    public scheduleId: number,
+    public lessonId: number,
     public scheduledDate: Date,
     public duration: number,
     public completed: boolean,

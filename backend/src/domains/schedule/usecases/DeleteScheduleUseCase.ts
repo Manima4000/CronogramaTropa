@@ -8,7 +8,7 @@ export class DeleteScheduleUseCase {
     private scheduleItemRepository: IScheduleItemRepository
   ) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(id: number): Promise<void> {
     // Deletar itens do cronograma primeiro (cascade pode fazer isso automaticamente)
     await this.scheduleItemRepository.deleteByScheduleId(id);
 

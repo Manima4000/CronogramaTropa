@@ -21,16 +21,29 @@ export class PrismaLessonRepository implements ILessonRepository {
     });
   }
 
-  async findById(id: string): Promise<Lesson | null> {
+  async findById(id: number): Promise<Lesson | null> {
     return await prisma.lesson.findUnique({
       where: { id },
     });
   }
 
-  async findBySectionId(sectionId: string): Promise<Lesson[]> {
+  async findBySectionId(sectionId: number): Promise<Lesson[]> {
     return await prisma.lesson.findMany({
       where: { sectionId },
       orderBy: { position: 'asc' },
+    });
+  }
+
+  async update(id: number, data: Partial<Lesson>): Promise<Lesson> {
+    return await prisma.lesson.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async delete(id: number): Promise<void> {
+    await prisma.lesson.delete({
+      where: { id },
     });
   }
 }

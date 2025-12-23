@@ -54,7 +54,7 @@ export class PrismaScheduleRepository implements IScheduleRepository {
     );
   }
 
-  async findById(id: string): Promise<Schedule | null> {
+  async findById(id: number): Promise<Schedule | null> {
     const schedule = await prisma.schedule.findUnique({
       where: { id },
     });
@@ -76,7 +76,7 @@ export class PrismaScheduleRepository implements IScheduleRepository {
   }
 
   async update(
-    id: string,
+    id: number,
     data: Partial<Omit<Schedule, 'id' | 'createdAt' | 'updatedAt'>>
   ): Promise<Schedule> {
     const schedule = await prisma.schedule.update({
@@ -98,7 +98,7 @@ export class PrismaScheduleRepository implements IScheduleRepository {
     );
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     await prisma.schedule.delete({
       where: { id },
     });

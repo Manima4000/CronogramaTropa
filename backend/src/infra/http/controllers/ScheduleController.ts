@@ -51,7 +51,7 @@ export class ScheduleController {
     try {
       const { id } = req.params;
 
-      const result = await this.getScheduleByIdUseCase.execute(id);
+      const result = await this.getScheduleByIdUseCase.execute(Number(id));
 
       if (!result) {
         throw new AppError('Schedule not found', 404);
@@ -67,7 +67,7 @@ export class ScheduleController {
     try {
       const { id } = req.params;
 
-      await this.deleteScheduleUseCase.execute(id);
+      await this.deleteScheduleUseCase.execute(Number(id));
 
       return res.status(204).send();
     } catch (error) {
@@ -79,7 +79,7 @@ export class ScheduleController {
     try {
       const { id } = req.params;
 
-      const pdfBuffer = await this.exportScheduleToPDFUseCase.execute(id);
+      const pdfBuffer = await this.exportScheduleToPDFUseCase.execute(Number(id));
 
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=cronograma-${id}.pdf`);

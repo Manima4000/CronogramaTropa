@@ -1,25 +1,26 @@
 // DTO para mapear a resposta da API Memberkit para Section
 export interface MemberkitSectionDTO {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   position: number;
+  lessons?: any[]; // Lessons vêm dentro da section no /courses/{id}
   // Outros campos que a API retorna mas não vamos armazenar
   [key: string]: any;
 }
 
 // DTO de saída (o que salvamos no banco)
 export interface SectionDTO {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   position: number;
-  courseId: string;
+  courseId: number;
 }
 
 // Mapper para converter MemberkitSectionDTO -> SectionDTO
 export class SectionMapper {
-  static toDomain(memberkit: MemberkitSectionDTO, courseId: string): SectionDTO {
+  static toDomain(memberkit: MemberkitSectionDTO, courseId: number): SectionDTO {
     return {
       id: memberkit.id,
       name: memberkit.name,

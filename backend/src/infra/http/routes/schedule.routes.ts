@@ -52,10 +52,168 @@ const scheduleController = new ScheduleController(
 );
 
 // Rotas
+
+/**
+ * @swagger
+ * /api/schedules:
+ *   post:
+ *     tags:
+ *       - Schedules
+ *     summary: Criar um novo cronograma
+ *     description: Cria um novo cronograma de estudos para um curso específico
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateScheduleRequest'
+ *     responses:
+ *       201:
+ *         description: Cronograma criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 schedule:
+ *                   $ref: '#/components/schemas/Schedule'
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ScheduleItem'
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Curso não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 scheduleRoutes.post('/', (req, res, next) => scheduleController.create(req, res, next));
+
+/**
+ * @swagger
+ * /api/schedules:
+ *   get:
+ *     tags:
+ *       - Schedules
+ *     summary: Listar todos os cronogramas
+ *     description: Retorna uma lista de todos os cronogramas cadastrados
+ *     responses:
+ *       200:
+ *         description: Lista de cronogramas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Schedule'
+ */
 scheduleRoutes.get('/', (req, res, next) => scheduleController.list(req, res, next));
+
+/**
+ * @swagger
+ * /api/schedules/{id}:
+ *   get:
+ *     tags:
+ *       - Schedules
+ *     summary: Buscar cronograma por ID
+ *     description: Retorna um cronograma específico com seus itens
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID do cronograma
+ *     responses:
+ *       200:
+ *         description: Cronograma encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 schedule:
+ *                   $ref: '#/components/schemas/Schedule'
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ScheduleItem'
+ *       404:
+ *         description: Cronograma não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 scheduleRoutes.get('/:id', (req, res, next) => scheduleController.getById(req, res, next));
+
+/**
+ * @swagger
+ * /api/schedules/{id}:
+ *   delete:
+ *     tags:
+ *       - Schedules
+ *     summary: Deletar cronograma
+ *     description: Remove um cronograma e todos os seus itens
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID do cronograma
+ *     responses:
+ *       204:
+ *         description: Cronograma deletado com sucesso
+ *       404:
+ *         description: Cronograma não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 scheduleRoutes.delete('/:id', (req, res, next) => scheduleController.delete(req, res, next));
+
+/**
+ * @swagger
+ * /api/schedules/{id}/export/pdf:
+ *   get:
+ *     tags:
+ *       - Schedules
+ *     summary: Exportar cronograma para PDF
+ *     description: Gera e retorna um arquivo PDF do cronograma
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID do cronograma
+ *     responses:
+ *       200:
+ *         description: PDF gerado com sucesso
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Cronograma não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 scheduleRoutes.get('/:id/export/pdf', (req, res, next) =>
   scheduleController.exportToPDF(req, res, next)
 );

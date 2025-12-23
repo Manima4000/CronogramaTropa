@@ -1,6 +1,6 @@
 // DTO para mapear a resposta da API Memberkit para Classroom
 export interface MemberkitClassroomDTO {
-  id: string;
+  id: number;
   name: string;
   course_name: string;
   user_count: number;
@@ -10,7 +10,7 @@ export interface MemberkitClassroomDTO {
 
 // DTO de saída (o que salvamos no banco)
 export interface ClassroomDTO {
-  id: string;
+  id: number;
   name: string;
   courseName: string;
   userCount: number;

@@ -1,10 +1,10 @@
 // Entity seguindo princípios do DDD
 export class Schedule {
   constructor(
-    public readonly id: string,
+    public readonly id: number,
     public title: string,
     public description: string | null,
-    public courseId: string,
+    public courseId: number,
     public startDate: Date,
     public endDate: Date,
     public studyDaysPerWeek: number,

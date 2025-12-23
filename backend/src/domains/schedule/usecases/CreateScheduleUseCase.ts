@@ -6,7 +6,7 @@ import { Schedule } from '../entities/Schedule';
 interface CreateScheduleInput {
   title: string;
   description?: string;
-  courseId: string;
+  courseId: number;
   startDate: Date;
   endDate: Date;
   studyDaysPerWeek: number;

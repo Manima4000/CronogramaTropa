@@ -38,7 +38,7 @@ export class PrismaScheduleItemRepository implements IScheduleItemRepository {
     });
   }
 
-  async findByScheduleId(scheduleId: string): Promise<ScheduleItem[]> {
+  async findByScheduleId(scheduleId: number): Promise<ScheduleItem[]> {
     const items = await prisma.scheduleItem.findMany({
       where: { scheduleId },
       orderBy: { scheduledDate: 'asc' },
@@ -59,7 +59,7 @@ export class PrismaScheduleItemRepository implements IScheduleItemRepository {
     );
   }
 
-  async updateCompletion(id: string, completed: boolean): Promise<ScheduleItem> {
+  async updateCompletion(id: number, completed: boolean): Promise<ScheduleItem> {
     const item = await prisma.scheduleItem.update({
       where: { id },
       data: { completed },
@@ -77,7 +77,7 @@ export class PrismaScheduleItemRepository implements IScheduleItemRepository {
     );
   }
 
-  async deleteByScheduleId(scheduleId: string): Promise<void> {
+  async deleteByScheduleId(scheduleId: number): Promise<void> {
     await prisma.scheduleItem.deleteMany({
       where: { scheduleId },
     });

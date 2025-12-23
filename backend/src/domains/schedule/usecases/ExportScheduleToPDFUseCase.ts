@@ -11,7 +11,7 @@ export class ExportScheduleToPDFUseCase {
     private pdfProvider: IPDFProvider
   ) {}
 
-  async execute(scheduleId: string): Promise<Buffer> {
+  async execute(scheduleId: number): Promise<Buffer> {
     const schedule = await this.scheduleRepository.findById(scheduleId);
 
     if (!schedule) {

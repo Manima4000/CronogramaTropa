@@ -21,20 +21,20 @@ export class PrismaCourseRepository implements ICourseRepository {
     });
   }
 
-  async findById(id: string): Promise<Course | null> {
+  async findById(id: number): Promise<Course | null> {
     return await prisma.course.findUnique({
       where: { id },
     });
   }
 
-  async update(id: string, data: Partial<Course>): Promise<Course> {
+  async update(id: number, data: Partial<Course>): Promise<Course> {
     return await prisma.course.update({
       where: { id },
       data,
     });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     await prisma.course.delete({
       where: { id },
     });

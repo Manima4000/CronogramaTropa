@@ -1,7 +1,7 @@
 // DTO para mapear a resposta da API Memberkit para Lesson
 export interface MemberkitLessonDTO {
-  id: string;
-  name: string;
+  id: number;
+  title: string;
   slug: string;
   position: number;
   video?: MemberkitVideoDTO;
@@ -10,7 +10,7 @@ export interface MemberkitLessonDTO {
 }
 
 export interface MemberkitVideoDTO {
-  id: string;
+  id: number;
   source?: string;
   uid?: string;
   duration?: number;
@@ -21,41 +21,41 @@ export interface MemberkitVideoDTO {
 
 // DTO de saída (o que salvamos no banco)
 export interface LessonDTO {
-  id: string;
-  name: string;
+  id: number;
+  title: string;
   slug: string;
   position: number;
-  sectionId: string;
+  sectionId: number;
 }
 
 export interface VideoDTO {
-  id: string;
-  source?: string;
-  uid?: string;
-  duration?: number;
-  image?: string;
-  lessonId: string;
+  id: number;
+  source: string | null;
+  uid: string | null;
+  duration: number | null;
+  image: string | null;
+  lessonId: number;
 }
 
 // Mapper para converter MemberkitLessonDTO -> LessonDTO
 export class LessonMapper {
-  static toDomain(memberkit: MemberkitLessonDTO, sectionId: string): LessonDTO {
+  static toDomain(memberkit: MemberkitLessonDTO, sectionId: number): LessonDTO {
     return {
       id: memberkit.id,
-      name: memberkit.name,
+      title: memberkit.title,
       slug: memberkit.slug,
       position: memberkit.position,
       sectionId,
     };
   }
 
-  static videoToDomain(memberkit: MemberkitVideoDTO, lessonId: string): VideoDTO {
+  static videoToDomain(memberkit: MemberkitVideoDTO, lessonId: number): VideoDTO {
     return {
       id: memberkit.id,
-      source: memberkit.source,
-      uid: memberkit.uid,
-      duration: memberkit.duration,
-      image: memberkit.image,
+      source: memberkit.source || null,
+      uid: memberkit.uid || null,
+      duration: memberkit.duration || null,
+      image: memberkit.image || null,
       lessonId,
     };
   }

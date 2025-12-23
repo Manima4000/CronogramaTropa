@@ -1,17 +1,17 @@
 export interface Course {
-  id: string;
+  id: number;
   name: string;
   position: number;
   description: string | null;
-  image: string | null;
-  url: string | null;
+  imageUrl: string | null;
+  categoryId: number;
 }
 
 export interface ICourseRepository {
   create(course: Course): Promise<Course>;
   createMany(courses: Course[]): Promise<void>;
   findAll(): Promise<Course[]>;
-  findById(id: string): Promise<Course | null>;
-  update(id: string, data: Partial<Course>): Promise<Course>;
-  delete(id: string): Promise<void>;
+  findById(id: number): Promise<Course | null>;
+  update(id: number, data: Partial<Course>): Promise<Course>;
+  delete(id: number): Promise<void>;
 }

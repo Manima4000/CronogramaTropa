@@ -1,8 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
-export const prisma = new PrismaClient({
-  log: ['query', 'error', 'warn'],
+// Prisma 7.2 requer adapter para PostgreSQL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
 });
+
+const adapter = new PrismaPg(pool);
+
+// Type assertion para corrigir problema de inferência de tipos com adapter
+export const prisma = new PrismaClient({
+  adapter,
+  log: ['query', 'error', 'warn'],
+}) as PrismaClient;
 
 export const connectDatabase = async () => {
   try {
@@ -16,4 +27,5 @@ export const connectDatabase = async () => {
 
 export const disconnectDatabase = async () => {
   await prisma.$disconnect();
+  await pool.end();
 };

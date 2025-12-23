@@ -15,7 +15,7 @@ export class GetScheduleByIdUseCase {
     private scheduleItemRepository: IScheduleItemRepository
   ) {}
 
-  async execute(id: string): Promise<GetScheduleByIdOutput | null> {
+  async execute(id: number): Promise<GetScheduleByIdOutput | null> {
     const schedule = await this.scheduleRepository.findById(id);
 
     if (!schedule) {

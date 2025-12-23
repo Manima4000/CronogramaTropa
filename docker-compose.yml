@@ -21,7 +21,8 @@ services:
       - ./backend:/app
       - /app/node_modules
     environment:
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
+      DATABASE_URL: ${DATABASE_URL}
+      MEMBERKIT_API_URL: ${MEMBERKIT_API_URL}
       MEMBERKIT_API_KEY: ${MEMBERKIT_API_KEY}
     depends_on:
       - db
