@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Tabela de Categorias
+model Category {
+  id        String           @id
+  title     String
+  courses   CategoryCourse[]
+
+  @@map("categories")
+}
+
+// Tabela de Cursos
+model Course {
+  id          String           @id
+  name        String
+  position    Int
+  description String?
+  image       String?
+  url         String?
+  categories  CategoryCourse[]
+  sections    Section[]
+  schedules   Schedule[]
+
+  @@map("courses")
+}
+
+// Tabela de linkagem Categoria <-> Curso
+model CategoryCourse {
+  id         String   @id @default(uuid())
+  categoryId String
+  courseId   String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, courseId])
+  @@map("category_courses")
+}
+
+// Tabela de Sections (Módulos)
+model Section {
+  id       String   @id
+  name     String
+  slug     String
+  position Int
+  courseId String
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons  Lesson[]
+
+  @@map("sections")
+}
+
+// Tabela de Lessons (Aulas)
+model Lesson {
+  id            String         @id
+  name          String
+  slug          String
+  position      Int
+  sectionId     String
+  section       Section        @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  video         Video?
+  scheduleItems ScheduleItem[]
+
+  @@map("lessons")
+}
+
+// Tabela de Vídeos (associado a Lesson)
+model Video {
+  id       String  @id
+  source   String?
+  uid      String?
+  duration Int?
+  image    String?
+  lessonId String  @unique
+  lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("videos")
+}
+
+// Tabela de Classrooms (Turmas)
+model Classroom {
+  id         String @id
+  name       String
+  courseName String @map("course_name")
+  userCount  Int    @default(0) @map("user_count")
+
+  @@map("classrooms")
+}
+
+// Tabela de Cronogramas
+model Schedule {
+  id               String         @id @default(uuid())
+  title            String
+  description      String?
+  courseId         String
+  course           Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  startDate        DateTime       @map("start_date")
+  endDate          DateTime       @map("end_date")
+  studyDaysPerWeek Int            @map("study_days_per_week")
+  hoursPerDay      Int            @map("hours_per_day")
+  items            ScheduleItem[]
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("schedules")
+}
+
+// Tabela de Itens do Cronograma
+model ScheduleItem {
+  id            String   @id @default(uuid())
+  scheduleId    String   @map("schedule_id")
+  schedule      Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  lessonId      String   @map("lesson_id")
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  scheduledDate DateTime @map("scheduled_date")
+  duration      Int
+  completed     Boolean  @default(false)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("schedule_items")
+}
