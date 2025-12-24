@@ -1,12 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { GetLessonsBySectionIdUseCase } from '../../../domains/lesson/usecases/GetLessonsBySectionIdUseCase';
 import { GetLessonsByCourseIdUseCase } from '../../../domains/lesson/usecases/GetLessonsByCourseIdUseCase';
+import { GetLessonsWithVideosBySectionIdUseCase } from '../../../domains/lesson/usecases/GetLessonsWithVideosBySectionIdUseCase';
+import { GetLessonsWithVideosByCourseIdUseCase } from '../../../domains/lesson/usecases/GetLessonsWithVideosByCourseIdUseCase';
 
 // Dependency Inversion Principle (D do SOLID)
 export class LessonController {
   constructor(
     private getLessonsBySectionUseCase: GetLessonsBySectionIdUseCase,
-    private getLessonsByCourseUseCase: GetLessonsByCourseIdUseCase
+    private getLessonsByCourseUseCase: GetLessonsByCourseIdUseCase,
+    private getLessonsWithVideosBySectionUseCase: GetLessonsWithVideosBySectionIdUseCase,
+    private getLessonsWithVideosByCourseUseCase: GetLessonsWithVideosByCourseIdUseCase
   ) {}
 
   async listBySection(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -26,6 +30,30 @@ export class LessonController {
       const { courseId } = req.params;
 
       const lessons = await this.getLessonsByCourseUseCase.execute(Number(courseId));
+
+      return res.json(lessons);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async listBySectionWithVideos(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { sectionId } = req.params;
+
+      const lessons = await this.getLessonsWithVideosBySectionUseCase.execute(Number(sectionId));
+
+      return res.json(lessons);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async listByCourseWithVideos(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { courseId } = req.params;
+
+      const lessons = await this.getLessonsWithVideosByCourseUseCase.execute(Number(courseId));
 
       return res.json(lessons);
     } catch (error) {

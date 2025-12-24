@@ -4,7 +4,7 @@ export class Schedule {
     public readonly id: number,
     public title: string,
     public description: string | null,
-    public courseId: number,
+    public courseId: number | null,
     public startDate: Date,
     public endDate: Date,
     public studyDaysPerWeek: number,

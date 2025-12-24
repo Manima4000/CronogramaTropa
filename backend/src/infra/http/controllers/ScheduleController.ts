@@ -25,7 +25,7 @@ export class ScheduleController {
       const schedule = await this.createScheduleUseCase.execute({
         title,
         description,
-        courseId,
+        courseId: courseId ?? null,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         studyDaysPerWeek,

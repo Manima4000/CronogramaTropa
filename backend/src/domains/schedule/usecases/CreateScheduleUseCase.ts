@@ -17,7 +17,7 @@ export interface ScheduleItemInput {
 export interface CreateScheduleInput {
   title: string;
   description: string | null;
-  courseId: number;
+  courseId?: number | null;
   startDate: Date;
   endDate: Date;
   studyDaysPerWeek: number;
@@ -36,13 +36,7 @@ export class CreateScheduleUseCase {
   ) {}
 
   async execute(input: CreateScheduleInput): Promise<Schedule> {
-    // 1. Validar se o course existe
-    const course = await this.courseRepository.findById(input.courseId);
-    if (!course) {
-      throw new AppError('Course not found', 404);
-    }
-
-    // 2. Validar se há items
+    // 1. Validar se há items
     if (!input.items || input.items.length === 0) {
       throw new AppError('At least one lesson must be scheduled', 400);
     }
@@ -63,11 +57,11 @@ export class CreateScheduleUseCase {
       throw new AppError(`Lessons not found: ${ids}`, 404);
     }
 
-    // 4. Criar o schedule (validações da entidade Schedule serão executadas no construtor)
+    // 3. Criar o schedule (validações da entidade Schedule serão executadas no construtor)
     const schedule = await this.scheduleRepository.create({
       title: input.title,
       description: input.description,
-      courseId: input.courseId,
+      courseId: input.courseId ?? null,
       startDate: input.startDate,
       endDate: input.endDate,
       studyDaysPerWeek: input.studyDaysPerWeek,

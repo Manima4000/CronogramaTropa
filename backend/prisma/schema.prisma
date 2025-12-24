@@ -88,8 +88,8 @@ model Schedule {
   id               Int         @id @default(autoincrement())
   title            String
   description      String?
-  courseId         Int
-  course           Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId         Int?
+  course           Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
   startDate        DateTime       @map("start_date")
   endDate          DateTime       @map("end_date")
   studyDaysPerWeek Int            @map("study_days_per_week")

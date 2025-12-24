@@ -82,6 +82,26 @@ export class PrismaLessonRepository implements ILessonRepository {
     ));
   }
 
+  async findBySectionIdWithVideos(sectionId: number): Promise<any[]> {
+    const lessons = await prisma.lesson.findMany({
+      where: { sectionId },
+      include: { video: true },
+      orderBy: { position: 'asc' },
+    });
+    return lessons;
+  }
+
+  async findByCourseIdWithVideos(courseId: number): Promise<any[]> {
+    const lessons = await prisma.lesson.findMany({
+      where: {
+        section: { courseId }
+      },
+      include: { video: true },
+      orderBy: { position: 'asc' },
+    });
+    return lessons;
+  }
+
   async update(id: number, data: Partial<Lesson>): Promise<Lesson> {
     const updated = await prisma.lesson.update({
       where: { id },

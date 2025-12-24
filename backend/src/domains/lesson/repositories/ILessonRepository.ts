@@ -6,6 +6,8 @@ export interface ILessonRepository {
   findAll(): Promise<Lesson[]>;
   findById(id: number): Promise<Lesson | null>;
   findBySectionId(sectionId: number): Promise<Lesson[]>;
+  findBySectionIdWithVideos(sectionId: number): Promise<any[]>;
+  findByCourseIdWithVideos(courseId: number): Promise<any[]>;
   update(id: number, data: Partial<Lesson>): Promise<Lesson>;
   delete(id: number): Promise<void>;
 }
