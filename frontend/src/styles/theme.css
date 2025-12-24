@@ -1,0 +1,69 @@
+@layer base {
+  :root {
+    /* Primary Military Colors */
+    --color-military-green: #4a5d23;
+    --color-military-green-light: #6b8e23;
+    --color-military-green-dark: #3a4a1a;
+
+    /* Secondary Military Colors */
+    --color-military-khaki: #bdb76b;
+    --color-military-khaki-light: #d4d2a5;
+    --color-military-khaki-dark: #9a9456;
+
+    /* Neutral Military Colors */
+    --color-military-dark: #2c3e17;
+    --color-military-gray: #4f5d4c;
+    --color-military-light-gray: #a8b5a1;
+
+    /* Camouflage Accent */
+    --color-camo-brown: #8b7355;
+    --color-camo-sand: #c2b280;
+
+    /* Status Colors */
+    --color-success: #6b8e23;
+    --color-warning: #d4af37;
+    --color-error: #8b0000;
+    --color-info: #4a5d23;
+
+    /* Background */
+    --color-bg-primary: #fafaf8;
+    --color-bg-secondary: #f5f5f0;
+    --color-bg-tertiary: #e8e8e0;
+
+    /* Text */
+    --color-text-primary: #2c3e17;
+    --color-text-secondary: #4f5d4c;
+    --color-text-muted: #a8b5a1;
+
+    /* Borders */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.375rem;
+    --border-radius-lg: 0.5rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(44, 62, 23, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(44, 62, 23, 0.1), 0 2px 4px -1px rgba(44, 62, 23, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(44, 62, 23, 0.1), 0 4px 6px -2px rgba(44, 62, 23, 0.05);
+  }
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* Toast Animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}

@@ -1,0 +1,31 @@
+export const MESSAGES = {
+  schedule: {
+    createSuccess: 'Cronograma criado com sucesso!',
+    createError: 'Erro ao criar cronograma. Tente novamente.',
+    deleteSuccess: 'Cronograma excluído com sucesso!',
+    deleteError: 'Erro ao excluir cronograma.',
+    exportSuccess: 'Cronograma exportado com sucesso!',
+    exportError: 'Erro ao exportar cronograma.',
+    loadError: 'Erro ao carregar cronogramas.',
+    notFound: 'Cronograma não encontrado.',
+    deleteConfirm: 'Tem certeza que deseja excluir este cronograma?',
+  },
+  sync: {
+    coursesSuccess: 'Cursos sincronizados com sucesso!',
+    sectionsSuccess: 'Seções sincronizadas com sucesso!',
+    videosSuccess: 'Vídeos sincronizados com sucesso!',
+    classroomsSuccess: 'Turmas sincronizadas com sucesso!',
+    error: 'Erro ao sincronizar. Tente novamente.',
+  },
+  common: {
+    loading: 'Carregando...',
+    error: 'Ocorreu um erro. Tente novamente.',
+    noData: 'Nenhum dado encontrado.',
+    cancel: 'Cancelar',
+    confirm: 'Confirmar',
+    save: 'Salvar',
+    delete: 'Excluir',
+    edit: 'Editar',
+    back: 'Voltar',
+  },
+} as const;
