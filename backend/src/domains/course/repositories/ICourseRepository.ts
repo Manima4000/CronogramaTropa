@@ -1,11 +1,4 @@
-export interface Course {
-  id: number;
-  name: string;
-  position: number;
-  description: string | null;
-  imageUrl: string | null;
-  categoryId: number;
-}
+import { Course } from '../entities/Course';
 
 export interface ICourseRepository {
   create(course: Course): Promise<Course>;

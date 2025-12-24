@@ -1,3 +1,5 @@
+import { Classroom } from '../../../../domains/classroom/entities/Classroom';
+
 // DTO para mapear a resposta da API Memberkit para Classroom
 export interface MemberkitClassroomDTO {
   id: number;
@@ -8,22 +10,14 @@ export interface MemberkitClassroomDTO {
   [key: string]: any;
 }
 
-// DTO de saída (o que salvamos no banco)
-export interface ClassroomDTO {
-  id: number;
-  name: string;
-  courseName: string;
-  userCount: number;
-}
-
-// Mapper para converter MemberkitClassroomDTO -> ClassroomDTO
+// Mapper para converter MemberkitClassroomDTO -> Classroom (Domain Entity)
 export class ClassroomMapper {
-  static toDomain(memberkit: MemberkitClassroomDTO): ClassroomDTO {
-    return {
-      id: memberkit.id,
-      name: memberkit.name,
-      courseName: memberkit.course_name,
-      userCount: memberkit.users_count,
-    };
+  static toDomain(memberkit: MemberkitClassroomDTO): Classroom {
+    return new Classroom(
+      memberkit.id,
+      memberkit.name,
+      memberkit.course_name,
+      memberkit.users_count
+    );
   }
 }

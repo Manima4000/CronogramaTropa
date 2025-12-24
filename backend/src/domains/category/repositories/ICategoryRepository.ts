@@ -1,7 +1,4 @@
-export interface Category {
-  id: number;
-  name: string;
-}
+import { Category } from '../entities/Category';
 
 export interface ICategoryRepository {
   create(category: Category): Promise<Category>;

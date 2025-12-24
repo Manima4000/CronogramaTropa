@@ -1,11 +1,4 @@
-export interface Video {
-  id: number;
-  source: string | null;
-  uid: string | null;
-  duration: number | null;
-  image: string | null;
-  lessonId: number;
-}
+import { Video } from '../entities/Video';
 
 export interface IVideoRepository {
   create(video: Video): Promise<Video>;

@@ -1,10 +1,4 @@
-export interface Lesson {
-  id: number;
-  title: string;
-  slug: string;
-  position: number;
-  sectionId: number;
-}
+import { Lesson } from '../entities/Lesson';
 
 export interface ILessonRepository {
   create(lesson: Lesson): Promise<Lesson>;

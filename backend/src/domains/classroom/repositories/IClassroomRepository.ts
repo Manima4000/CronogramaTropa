@@ -1,9 +1,4 @@
-export interface Classroom {
-  id: number;
-  name: string;
-  courseName: string;
-  userCount: number;
-}
+import { Classroom } from '../entities/Classroom';
 
 export interface IClassroomRepository {
   create(classroom: Classroom): Promise<Classroom>;

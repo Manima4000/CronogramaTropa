@@ -1,3 +1,5 @@
+import { Section } from '../../../../domains/section/entities/Section';
+
 // DTO para mapear a resposta da API Memberkit para Section
 export interface MemberkitSectionDTO {
   id: number;
@@ -9,24 +11,15 @@ export interface MemberkitSectionDTO {
   [key: string]: any;
 }
 
-// DTO de saída (o que salvamos no banco)
-export interface SectionDTO {
-  id: number;
-  name: string;
-  slug: string;
-  position: number;
-  courseId: number;
-}
-
-// Mapper para converter MemberkitSectionDTO -> SectionDTO
+// Mapper para converter MemberkitSectionDTO -> Section (Domain Entity)
 export class SectionMapper {
-  static toDomain(memberkit: MemberkitSectionDTO, courseId: number): SectionDTO {
-    return {
-      id: memberkit.id,
-      name: memberkit.name,
-      slug: memberkit.slug,
-      position: memberkit.position,
-      courseId,
-    };
+  static toDomain(memberkit: MemberkitSectionDTO, courseId: number): Section {
+    return new Section(
+      memberkit.id,
+      memberkit.name,
+      memberkit.slug,
+      memberkit.position,
+      courseId
+    );
   }
 }

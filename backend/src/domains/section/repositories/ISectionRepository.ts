@@ -1,10 +1,4 @@
-export interface Section {
-  id: number;
-  name: string;
-  slug: string;
-  position: number;
-  courseId: number;
-}
+import { Section } from '../entities/Section';
 
 export interface ISectionRepository {
   create(section: Section): Promise<Section>;
