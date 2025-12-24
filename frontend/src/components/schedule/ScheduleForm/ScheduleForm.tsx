@@ -31,6 +31,7 @@ export const ScheduleForm: React.FC = () => {
       ...data,
       startDate: new Date(data.startDate).toISOString(),
       endDate: new Date(data.endDate).toISOString(),
+      items: [], // Automatic schedule - backend will generate items
     });
 
     if (result) {

@@ -111,17 +111,19 @@ export const ManualScheduleProvider: React.FC<{ children: React.ReactNode }> = (
   const toggleAllLessonsInSection = useCallback((sectionId: number, lessons: LessonWithVideoDTO[]) => {
     setState(prev => {
       const newSelectedLessons = new Map(prev.selectedLessons);
+      const newExpandedSections = new Set(prev.expandedSections);
       const allLessonsInSectionSelected = lessons.every(lesson => newSelectedLessons.has(lesson.id));
 
       if (allLessonsInSectionSelected) {
         // Desmarcar todas as aulas da seção
         lessons.forEach(lesson => newSelectedLessons.delete(lesson.id));
       } else {
-        // Marcar todas as aulas da seção
+        // Marcar todas as aulas da seção e expandir a seção
         lessons.forEach(lesson => newSelectedLessons.set(lesson.id, lesson));
+        newExpandedSections.add(sectionId);
       }
 
-      return { ...prev, selectedLessons: newSelectedLessons };
+      return { ...prev, selectedLessons: newSelectedLessons, expandedSections: newExpandedSections };
     });
   }, []);
 
