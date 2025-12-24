@@ -103,13 +103,14 @@ model Schedule {
 
 // Tabela de Itens do Cronograma
 model ScheduleItem {
-  id            Int   @id @default(autoincrement())
-  scheduleId    Int   @map("schedule_id")
+  id            Int      @id @default(autoincrement())
+  scheduleId    Int      @map("schedule_id")
   schedule      Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   lessonId      Int      @map("lesson_id")
   lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   scheduledDate DateTime @map("scheduled_date")
-  duration      Int
+  startTime     String   @map("start_time") // Formato HH:mm (ex: "14:30")
+  duration      Int      // Duração em minutos
   completed     Boolean  @default(false)
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")

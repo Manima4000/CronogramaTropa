@@ -5,7 +5,8 @@ export interface CreateScheduleItemData {
   scheduleId: number;
   lessonId: number;
   scheduledDate: Date;
-  duration: number;
+  startTime: string; // Formato HH:mm (ex: "14:30")
+  duration: number; // Duração em minutos
   completed: boolean;
 }
 
