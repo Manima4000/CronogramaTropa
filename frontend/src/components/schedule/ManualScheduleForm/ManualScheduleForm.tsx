@@ -6,6 +6,7 @@ import { validateManualSchedule } from '../../../utils/validation/manualSchedule
 import { ScheduleBasicInfo } from './ScheduleBasicInfo';
 import { CourseAndLessonSelector } from './CourseAndLessonSelector';
 import { SelectedLessonsPanel } from './SelectedLessonsPanel';
+import { UnallocatedLessonsPanel } from './UnallocatedLessonsPanel';
 import { WeekCalendar } from './WeekCalendar';
 import { Button } from '../../../shared/ui/Button/Button';
 import { Card } from '../../../shared/ui/Card/Card';
@@ -20,6 +21,7 @@ import type { CreateScheduleRequestDTO } from '../../../dtos/schedule/CreateSche
  * - Validar dados antes do submit
  * - Transformar state em DTO para envio ao backend
  * - Exibir erros de validação
+ * - Guiar o usuário através do fluxo
  */
 export const ManualScheduleForm: React.FC = () => {
   const navigate = useNavigate();
@@ -122,14 +124,51 @@ export const ManualScheduleForm: React.FC = () => {
         </Card>
       )}
 
-      {/* Informações Básicas */}
+      {/* Passo 1: Informações Básicas */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-military-green text-white font-bold text-sm">
+            1
+          </div>
+          <h2 className="text-lg font-semibold text-military-dark">
+            Informações Básicas
+          </h2>
+        </div>
+      </div>
       <ScheduleBasicInfo />
 
-      {/* Seleção de Aulas e Painel de Selecionadas */}
+      {/* Passo 2: Seleção de Aulas */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-military-green text-white font-bold text-sm">
+            2
+          </div>
+          <h2 className="text-lg font-semibold text-military-dark">
+            Seleção de Aulas
+          </h2>
+        </div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CourseAndLessonSelector />
         <SelectedLessonsPanel />
       </div>
+
+      {/* Passo 3: Alocação no Calendário */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-military-green text-white font-bold text-sm">
+            3
+          </div>
+          <h2 className="text-lg font-semibold text-military-dark">
+            Alocação no Calendário
+          </h2>
+        </div>
+      </div>
+
+      {/* Aulas Não Alocadas */}
+      {state.selectedLessons.size > 0 && (
+        <UnallocatedLessonsPanel />
+      )}
 
       {/* Calendário */}
       <WeekCalendar />

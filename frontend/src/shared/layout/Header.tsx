@@ -10,6 +10,7 @@ export const Header: React.FC = () => {
   const navLinks = [
     { path: ROUTES.home, label: 'Início', icon: 'house' },
     { path: ROUTES.schedules.list, label: 'Cronogramas', icon: 'calendar-check' },
+    { path: ROUTES.schedules.create, label: 'Criar', icon: 'plus-circle' },
   ];
 
   return (
