@@ -8,7 +8,7 @@ export interface ScheduleItemAllocation {
   duration: number; // minutos
 }
 
-interface ManualScheduleState {
+export interface ManualScheduleState {
   // Informações básicas
   title: string;
   description: string | null;
