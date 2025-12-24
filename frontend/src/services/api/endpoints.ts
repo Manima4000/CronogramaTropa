@@ -14,4 +14,11 @@ export const ENDPOINTS = {
     base: '/api/courses',
     byId: (id: number) => `/api/courses/${id}`,
   },
+  sections: {
+    byCourse: (courseId: number) => `/api/sections/course/${courseId}`,
+  },
+  lessons: {
+    bySection: (sectionId: number) => `/api/lessons/section/${sectionId}`,
+    byCourse: (courseId: number) => `/api/lessons/course/${courseId}`,
+  },
 } as const;

@@ -6,7 +6,7 @@ export const createScheduleSchema = yup.object({
     .required('Título é obrigatório')
     .min(3, 'Título deve ter no mínimo 3 caracteres')
     .max(100, 'Título deve ter no máximo 100 caracteres'),
-  description: yup.string().nullable(),
+  description: yup.string().nullable().optional(),
   courseId: yup
     .number()
     .required('Curso é obrigatório')

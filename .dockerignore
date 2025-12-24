@@ -1,0 +1,34 @@
+# Dependências locais
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+# Build e cache
+dist
+build
+.cache
+.vite
+
+# Configurações locais e editor
+*.swp
+*.swo
+*.tmp
+*.log
+*.DS_Store
+.vscode
+.idea
+
+# Arquivos de controle de versão
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Testes e docs
+coverage
+*.md
+docs
