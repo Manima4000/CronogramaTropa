@@ -3,8 +3,10 @@ import { prisma } from '../prisma';
 
 export class PrismaVideoRepository implements IVideoRepository {
   async create(video: Video): Promise<Video> {
-    return await prisma.video.create({
-      data: video,
+    return await prisma.video.upsert({
+      where: { id: video.id },
+      update: video,
+      create: video,
     });
   }
 

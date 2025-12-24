@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "sync:all": "npm run sync:courses && npm run sync:sections && npm run sync:videos && npm run sync:classrooms",
+    "sync:courses": "ts-node src/scripts/sync/sync-courses-and-categories.ts",
+    "sync:sections": "ts-node src/scripts/sync/sync-sections-and-lessons.ts",
+    "sync:videos": "ts-node src/scripts/sync/sync-videos.ts",
+    "sync:classrooms": "ts-node src/scripts/sync/sync-classrooms.ts"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +34,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "prisma": "^7.2.0",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }

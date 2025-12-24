@@ -3,8 +3,10 @@ import { prisma } from '../prisma';
 
 export class PrismaLessonRepository implements ILessonRepository {
   async create(lesson: Lesson): Promise<Lesson> {
-    return await prisma.lesson.create({
-      data: lesson,
+    return await prisma.lesson.upsert({
+      where: { id: lesson.id },
+      update: lesson,
+      create: lesson,
     });
   }
 

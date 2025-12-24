@@ -17,6 +17,13 @@ npm run dev                                    # Start development server with a
 npx prisma generate                            # Generate Prisma client after schema changes
 npx prisma migrate dev --name <migration_name> # Create and apply database migration
 npx prisma studio                              # Open Prisma Studio to browse database
+
+# Sync scripts (CLI)
+npm run sync:all        # Sync all entities sequentially (courses → sections → videos → classrooms)
+npm run sync:courses    # Sync only courses and categories
+npm run sync:sections   # Sync only sections and lessons
+npm run sync:videos     # Sync only videos
+npm run sync:classrooms # Sync only classrooms
 ```
 
 ### Frontend (React + Vite)
@@ -103,8 +110,12 @@ Interactive Swagger/OpenAPI documentation available at `http://localhost:3333/ap
 - `GET /:id/export/pdf` - Export to PDF
 
 **Sync Endpoints** (`/api/sync`):
-- `POST /` - Full sync from Memberkit (all entities)
-- `POST /partial` - Selective sync (specify which entity types via request body)
+- `POST /courses` - Sync courses and categories (Memberkit endpoint: `/courses`)
+- `POST /sections` - Sync sections and lessons (Memberkit endpoint: `/courses/{id}`)
+- `POST /videos` - Sync videos (Memberkit endpoint: `/courses/{courseId}/lessons/{id}`)
+- `POST /classrooms` - Sync classrooms (Memberkit endpoint: `/classrooms`)
+
+All endpoints are **decoupled** and group entities that come from the same Memberkit API endpoint, avoiding duplicate API calls. They can be called independently without dependencies on other endpoints.
 
 Swagger annotations live in route files using JSDoc. See `backend/SWAGGER.md` for usage examples.
 
@@ -142,14 +153,34 @@ Schema changes require updating:
 - `GET /classrooms` - Lists all classrooms
 - `GET /classrooms/{id}` - Returns specific classroom
 
-**Sync Flow:**
-The `SyncMemberkitDataUseCase` orchestrates syncing:
-1. **Categories & Courses**: Fetches `/courses`, extracts unique categories from course data, saves both
-2. **Sections & Lessons**: For each course, fetches `/courses/{id}` to get sections with embedded lessons
-3. **Videos**: For each lesson, fetches `/courses/{course_id}/lessons/{id}` to get video details
-4. **Classrooms**: Fetches `/classrooms` to sync classroom data
+**Sync Architecture:**
+The synchronization system has been redesigned to be **decoupled** with independent use cases for each type of sync:
 
-Uses `api_key` query parameter for authentication, maps DTOs to domain entities via mappers, upserts with `skipDuplicates: true`, returns statistics, and supports selective sync.
+1. **`SyncCoursesAndCategoriesUseCase`**:
+   - Fetches `/courses` endpoint once
+   - Extracts and saves unique categories
+   - Saves all courses
+   - Can be run independently via API (`POST /api/sync/courses`) or CLI (`npm run sync:courses`)
+
+2. **`SyncSectionsAndLessonsUseCase`**:
+   - Fetches `/courses/{id}` for each course in the database
+   - Extracts and saves sections with their lessons
+   - Can be run independently via API (`POST /api/sync/sections`) or CLI (`npm run sync:sections`)
+   - **Now works independently** - no longer requires section sync to sync lessons
+
+3. **`SyncVideosUseCase`**:
+   - Fetches `/courses/{courseId}/lessons/{id}` for each lesson in the database
+   - Saves video data for lessons that have videos
+   - Can be run independently via API (`POST /api/sync/videos`) or CLI (`npm run sync:videos`)
+
+4. **`SyncClassroomsUseCase`**:
+   - Fetches `/classrooms` endpoint once
+   - Saves all classrooms
+   - Can be run independently via API (`POST /api/sync/classrooms`) or CLI (`npm run sync:classrooms`)
+
+**CLI Scripts** are available in `backend/src/scripts/sync/` and can be executed with the npm commands above. Each script uses the corresponding use case.
+
+All sync operations use `api_key` query parameter for authentication, map DTOs to domain entities via mappers, and upsert with `skipDuplicates: true` to avoid duplicates.
 
 ### Error Handling
 

@@ -1,38 +1,47 @@
 import { Request, Response, NextFunction } from 'express';
-import { SyncMemberkitDataUseCase } from '../../../domains/sync/usecases/SyncMemberkitDataUseCase';
+import { SyncCoursesAndCategoriesUseCase } from '../../../domains/sync/usecases/SyncCoursesAndCategoriesUseCase';
+import { SyncSectionsAndLessonsUseCase } from '../../../domains/sync/usecases/SyncSectionsAndLessonsUseCase';
+import { SyncVideosUseCase } from '../../../domains/sync/usecases/SyncVideosUseCase';
+import { SyncClassroomsUseCase } from '../../../domains/sync/usecases/SyncClassroomsUseCase';
 
 export class SyncController {
-  constructor(private syncMemberkitDataUseCase: SyncMemberkitDataUseCase) {}
+  constructor(
+    private syncCoursesAndCategoriesUseCase: SyncCoursesAndCategoriesUseCase,
+    private syncSectionsAndLessonsUseCase: SyncSectionsAndLessonsUseCase,
+    private syncVideosUseCase: SyncVideosUseCase,
+    private syncClassroomsUseCase: SyncClassroomsUseCase
+  ) {}
 
-  async syncAll(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  async syncCoursesAndCategories(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
-      const result = await this.syncMemberkitDataUseCase.execute();
+      const result = await this.syncCoursesAndCategoriesUseCase.execute();
       return res.json(result);
     } catch (error) {
       next(error);
     }
   }
 
-  async syncPartial(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  async syncSectionsAndLessons(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
-      const {
-        syncCategories,
-        syncCourses,
-        syncSections,
-        syncLessons,
-        syncVideos,
-        syncClassrooms,
-      } = req.body;
+      const result = await this.syncSectionsAndLessonsUseCase.execute();
+      return res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      const result = await this.syncMemberkitDataUseCase.execute({
-        syncCategories,
-        syncCourses,
-        syncSections,
-        syncLessons,
-        syncVideos,
-        syncClassrooms,
-      });
+  async syncVideos(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const result = await this.syncVideosUseCase.execute();
+      return res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 
+  async syncClassrooms(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const result = await this.syncClassroomsUseCase.execute();
       return res.json(result);
     } catch (error) {
       next(error);
