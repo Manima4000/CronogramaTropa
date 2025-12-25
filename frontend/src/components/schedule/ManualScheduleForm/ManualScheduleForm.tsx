@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useManualSchedule } from '../../../contexts/ManualScheduleContext';
 import { useCreateSchedule } from '../../../hooks/schedule/useCreateSchedule';
+import { useToast } from '../../../contexts/ToastContext';
 import { validateManualSchedule } from '../../../utils/validation/manualScheduleValidation';
 import { ScheduleBasicInfo } from './ScheduleBasicInfo';
 import { CourseAndLessonSelector } from './CourseAndLessonSelector';
@@ -11,6 +12,7 @@ import { WeekCalendar } from './WeekCalendar';
 import { Button } from '../../../shared/ui/Button/Button';
 import { Card } from '../../../shared/ui/Card/Card';
 import { Icon } from '../../../shared/ui/Icon/Icon';
+import { LoadingOverlay } from '../../../shared/feedback/LoadingOverlay';
 import { ROUTES } from '../../../utils/constants/routes';
 import type { CreateScheduleRequestDTO } from '../../../dtos/schedule/CreateScheduleRequestDTO';
 
@@ -27,46 +29,74 @@ export const ManualScheduleForm: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useManualSchedule();
   const { createSchedule, loading } = useCreateSchedule();
+  const { addToast } = useToast();
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidation, setShowValidation] = useState(false);
 
   const handleSubmit = async () => {
-    // Validar
-    const validation = validateManualSchedule(state);
+    try {
+      // Validar
+      const validation = validateManualSchedule(state);
 
-    if (!validation.isValid) {
-      setValidationErrors(validation.errors.map(e => e.message));
-      setShowValidation(true);
-      // Scroll para o topo para mostrar erros
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+      if (!validation.isValid) {
+        setValidationErrors(validation.errors.map(e => e.message));
+        setShowValidation(true);
 
-    setValidationErrors([]);
-    setShowValidation(false);
+        addToast({
+          type: 'error',
+          message: `${validation.errors.length} erro(s) de validação encontrado(s). Corrija antes de continuar.`,
+          duration: 5000,
+        });
 
-    // Transformar state em DTO
-    const dto: CreateScheduleRequestDTO = {
-      title: state.title,
-      description: state.description,
-      courseId: null, // Manual schedule - not tied to a single course
-      startDate: state.startDate!.toISOString(),
-      endDate: state.endDate!.toISOString(),
-      studyDaysPerWeek: state.studyDaysPerWeek,
-      hoursPerDay: state.hoursPerDay,
-      items: Array.from(state.allocations.values()).map(allocation => ({
-        lessonId: allocation.lessonId,
-        scheduledDate: allocation.scheduledDate.toISOString(),
-        startTime: allocation.startTime,
-        duration: allocation.duration,
-      })),
-    };
+        // Scroll para o topo para mostrar erros
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
 
-    // Criar cronograma
-    const result = await createSchedule(dto);
+      setValidationErrors([]);
+      setShowValidation(false);
 
-    if (result) {
-      navigate(ROUTES.schedules.detail(result.schedule.id));
+      // Transformar state em DTO
+      const dto: CreateScheduleRequestDTO = {
+        title: state.title,
+        description: state.description,
+        courseId: null, // Manual schedule - not tied to a single course
+        startDate: state.startDate!.toISOString(),
+        endDate: state.endDate!.toISOString(),
+        studyDaysPerWeek: state.studyDaysPerWeek,
+        hoursPerDay: state.hoursPerDay,
+        items: Array.from(state.allocations.values()).map(allocation => ({
+          lessonId: allocation.lessonId,
+          scheduledDate: allocation.scheduledDate.toISOString(),
+          startTime: allocation.startTime,
+          duration: allocation.duration,
+        })),
+      };
+
+      // Criar cronograma
+      const result = await createSchedule(dto);
+
+      if (result) {
+        addToast({
+          type: 'success',
+          message: 'Cronograma criado com sucesso!',
+          duration: 3000,
+        });
+        navigate(ROUTES.schedules.detail(result.schedule.id));
+      } else {
+        addToast({
+          type: 'error',
+          message: 'Erro ao criar cronograma. Tente novamente.',
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      console.error('Error creating schedule:', error);
+      addToast({
+        type: 'error',
+        message: 'Erro inesperado ao criar cronograma. Verifique sua conexão e tente novamente.',
+        duration: 5000,
+      });
     }
   };
 
@@ -76,7 +106,18 @@ export const ManualScheduleForm: React.FC = () => {
     setShowValidation(true);
 
     if (validation.isValid) {
-      // Mostrar mensagem de sucesso
+      addToast({
+        type: 'success',
+        message: 'Validação concluída com sucesso! Todos os campos estão corretos.',
+        duration: 4000,
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      addToast({
+        type: 'warning',
+        message: `${validation.errors.length} erro(s) encontrado(s). Verifique os detalhes acima.`,
+        duration: 5000,
+      });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -239,6 +280,9 @@ export const ManualScheduleForm: React.FC = () => {
           </div>
         </div>
       </Card>
+
+      {/* Loading Overlay */}
+      {loading && <LoadingOverlay message="Criando cronograma..." />}
     </div>
   );
 };
