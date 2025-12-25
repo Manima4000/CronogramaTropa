@@ -2,12 +2,46 @@ import React from 'react';
 import { useManualSchedule } from '../../../contexts/ManualScheduleContext';
 import { Input } from '../../../shared/ui/Input/Input';
 import { Card } from '../../../shared/ui/Card/Card';
+import { parseLocalDate, formatDateForInput, isValidDate } from '../../../utils/date/dateHelpers';
 
 export const ScheduleBasicInfo: React.FC = () => {
-  const { state, setBasicInfo } = useManualSchedule();
+  const { state, setBasicInfo, cleanOrphanedAllocations } = useManualSchedule();
 
   const handleInputChange = (field: string, value: string | number | Date) => {
     setBasicInfo({ [field]: value } as any);
+  };
+
+  const handleDateChange = (field: 'startDate' | 'endDate', dateString: string) => {
+    if (!dateString) return;
+
+    const newDate = parseLocalDate(dateString);
+
+    // Verificar se é uma data válida
+    if (!isValidDate(newDate)) {
+      return;
+    }
+
+    // Validar range de datas
+    if (field === 'endDate' && state.startDate) {
+      if (newDate < state.startDate) {
+        return; // Não permitir data de fim antes da data de início
+      }
+    }
+
+    if (field === 'startDate' && state.endDate) {
+      if (newDate > state.endDate) {
+        return; // Não permitir data de início depois da data de fim
+      }
+    }
+
+    // Aplicar a mudança de data
+    setBasicInfo({ [field]: newDate } as any);
+
+    // Limpar alocações órfãs após mudança de data
+    // Aguardar próximo tick para garantir que o state foi atualizado
+    setTimeout(() => {
+      cleanOrphanedAllocations();
+    }, 0);
   };
 
   return (
@@ -45,44 +79,19 @@ export const ScheduleBasicInfo: React.FC = () => {
           <Input
             type="date"
             label="Data de Início *"
-            value={state.startDate ? state.startDate.toISOString().split('T')[0] : ''}
-            onChange={(e) => handleInputChange('startDate', new Date(e.target.value))}
+            value={state.startDate ? formatDateForInput(state.startDate) : ''}
+            onChange={(e) => handleDateChange('startDate', e.target.value)}
             fullWidth
           />
 
           <Input
             type="date"
             label="Data de Término *"
-            value={state.endDate ? state.endDate.toISOString().split('T')[0] : ''}
-            onChange={(e) => handleInputChange('endDate', new Date(e.target.value))}
+            value={state.endDate ? formatDateForInput(state.endDate) : ''}
+            onChange={(e) => handleDateChange('endDate', e.target.value)}
+            min={state.startDate ? formatDateForInput(state.startDate) : undefined}
             fullWidth
-          />
-        </div>
-
-        <h3 className="text-xl font-semibold text-military-dark mt-6 mb-4">
-          Configuração de Estudo
-        </h3>
-
-        {/* Dias por semana e horas por dia */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            type="number"
-            label="Dias de Estudo por Semana *"
-            min={1}
-            max={7}
-            value={state.studyDaysPerWeek.toString()}
-            onChange={(e) => handleInputChange('studyDaysPerWeek', parseInt(e.target.value) || 1)}
-            fullWidth
-          />
-
-          <Input
-            type="number"
-            label="Horas por Dia *"
-            min={1}
-            max={24}
-            value={state.hoursPerDay.toString()}
-            onChange={(e) => handleInputChange('hoursPerDay', parseInt(e.target.value) || 1)}
-            fullWidth
+            disabled={!state.startDate}
           />
         </div>
       </div>

@@ -20,8 +20,6 @@ export interface CreateScheduleInput {
   courseId?: number | null;
   startDate: Date;
   endDate: Date;
-  studyDaysPerWeek: number;
-  hoursPerDay: number;
   items: ScheduleItemInput[];
 }
 
@@ -64,8 +62,6 @@ export class CreateScheduleUseCase {
       courseId: input.courseId ?? null,
       startDate: input.startDate,
       endDate: input.endDate,
-      studyDaysPerWeek: input.studyDaysPerWeek,
-      hoursPerDay: input.hoursPerDay,
     });
 
     // 5. Criar os schedule items (validações da entidade ScheduleItem serão executadas no construtor)

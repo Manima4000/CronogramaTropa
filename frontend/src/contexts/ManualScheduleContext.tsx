@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { LessonWithVideoDTO } from '../dtos/course/LessonDTO';
+import { isDateInRange } from '../utils/date/dateHelpers';
 
 export interface ScheduleItemAllocation {
   lessonId: number;
@@ -14,8 +15,6 @@ export interface ManualScheduleState {
   description: string | null;
   startDate: Date | null;
   endDate: Date | null;
-  studyDaysPerWeek: number;
-  hoursPerDay: number;
 
   // Seleção de aulas
   selectedCourses: Set<number>;
@@ -43,6 +42,7 @@ interface ManualScheduleContextValue {
   allocateLesson: (lessonId: number, allocation: ScheduleItemAllocation) => void;
   removeAllocation: (lessonId: number) => void;
   updateAllocation: (lessonId: number, updates: Partial<ScheduleItemAllocation>) => void;
+  cleanOrphanedAllocations: () => void;
 
   // Helpers
   getUnallocatedLessons: () => LessonWithVideoDTO[];
@@ -60,8 +60,6 @@ export const ManualScheduleProvider: React.FC<{ children: React.ReactNode }> = (
     description: null,
     startDate: null,
     endDate: null,
-    studyDaysPerWeek: 5,
-    hoursPerDay: 2,
     selectedCourses: new Set(),
     expandedSections: new Set(),
     selectedLessons: new Map(),
@@ -162,6 +160,33 @@ export const ManualScheduleProvider: React.FC<{ children: React.ReactNode }> = (
     });
   }, []);
 
+  /**
+   * Remove alocações que estão fora do range de datas do cronograma
+   * Single Responsibility Principle: função dedicada a limpar alocações órfãs
+   */
+  const cleanOrphanedAllocations = useCallback(() => {
+    setState(prev => {
+      // Se não temos datas definidas, não há o que limpar
+      if (!prev.startDate || !prev.endDate) {
+        return prev;
+      }
+
+      const newAllocations = new Map(prev.allocations);
+      let hasChanges = false;
+
+      // Iterar sobre alocações e remover as que estão fora do range
+      for (const [lessonId, allocation] of newAllocations.entries()) {
+        if (!isDateInRange(allocation.scheduledDate, prev.startDate, prev.endDate)) {
+          newAllocations.delete(lessonId);
+          hasChanges = true;
+        }
+      }
+
+      // Só atualizar state se houve mudanças (evitar re-renders desnecessários)
+      return hasChanges ? { ...prev, allocations: newAllocations } : prev;
+    });
+  }, []);
+
   const getUnallocatedLessons = useCallback((): LessonWithVideoDTO[] => {
     return Array.from(state.selectedLessons.values()).filter(
       lesson => !state.allocations.has(lesson.id)
@@ -195,6 +220,7 @@ export const ManualScheduleProvider: React.FC<{ children: React.ReactNode }> = (
     allocateLesson,
     removeAllocation,
     updateAllocation,
+    cleanOrphanedAllocations,
     getUnallocatedLessons,
     isLessonAllocated,
     isCourseSelected,

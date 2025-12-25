@@ -19,7 +19,7 @@ export class ScheduleController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
-      const { title, description, courseId, startDate, endDate, studyDaysPerWeek, hoursPerDay, items } =
+      const { title, description, courseId, startDate, endDate, items } =
         req.body;
 
       const schedule = await this.createScheduleUseCase.execute({
@@ -28,8 +28,6 @@ export class ScheduleController {
         courseId: courseId ?? null,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        studyDaysPerWeek,
-        hoursPerDay,
         items: items.map((item: any) => ({
           lessonId: item.lessonId,
           scheduledDate: new Date(item.scheduledDate),

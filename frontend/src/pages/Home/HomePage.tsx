@@ -35,19 +35,9 @@ export const HomePage: React.FC = () => {
         {/* Features */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
           <div className="p-6 bg-white rounded-lg shadow-md">
-            <i className="bi bi-magic text-3xl text-military-green mb-3"></i>
-            <h3 className="text-lg font-semibold text-military-dark mb-2">
-              Automático
-            </h3>
-            <p className="text-sm text-military-gray">
-              Gere cronogramas automaticamente baseados nas suas configurações de estudo
-            </p>
-          </div>
-
-          <div className="p-6 bg-white rounded-lg shadow-md">
             <i className="bi bi-pencil-square text-3xl text-military-green mb-3"></i>
             <h3 className="text-lg font-semibold text-military-dark mb-2">
-              Manual
+              Criação Manual
             </h3>
             <p className="text-sm text-military-gray">
               Crie cronogramas personalizados com drag-and-drop para controle total
@@ -55,12 +45,22 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="p-6 bg-white rounded-lg shadow-md">
-            <i className="bi bi-graph-up text-3xl text-military-green mb-3"></i>
+            <i className="bi bi-calendar-week text-3xl text-military-green mb-3"></i>
             <h3 className="text-lg font-semibold text-military-dark mb-2">
-              Acompanhamento
+              Múltiplos Cursos
             </h3>
             <p className="text-sm text-military-gray">
-              Visualize e gerencie seus cronogramas de forma organizada
+              Selecione aulas de diferentes cursos e organize em um único cronograma
+            </p>
+          </div>
+
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <i className="bi bi-graph-up text-3xl text-military-green mb-3"></i>
+            <h3 className="text-lg font-semibold text-military-dark mb-2">
+              Visualização
+            </h3>
+            <p className="text-sm text-military-gray">
+              Acompanhe e gerencie seus cronogramas de forma organizada
             </p>
           </div>
         </div>

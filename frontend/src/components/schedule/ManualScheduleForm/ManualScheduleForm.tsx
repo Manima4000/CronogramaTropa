@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useManualSchedule } from '../../../contexts/ManualScheduleContext';
+import {
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { useManualSchedule, type ScheduleItemAllocation } from '../../../contexts/ManualScheduleContext';
 import { useCreateSchedule } from '../../../hooks/schedule/useCreateSchedule';
 import { useToast } from '../../../contexts/ToastContext';
 import { validateManualSchedule } from '../../../utils/validation/manualScheduleValidation';
@@ -9,12 +17,15 @@ import { CourseAndLessonSelector } from './CourseAndLessonSelector';
 import { SelectedLessonsPanel } from './SelectedLessonsPanel';
 import { UnallocatedLessonsPanel } from './UnallocatedLessonsPanel';
 import { WeekCalendar } from './WeekCalendar';
+import { LessonCard } from './LessonCard';
+import { EditAllocationModal } from './EditAllocationModal';
 import { Button } from '../../../shared/ui/Button/Button';
 import { Card } from '../../../shared/ui/Card/Card';
 import { Icon } from '../../../shared/ui/Icon/Icon';
 import { LoadingOverlay } from '../../../shared/feedback/LoadingOverlay';
 import { ROUTES } from '../../../utils/constants/routes';
 import type { CreateScheduleRequestDTO } from '../../../dtos/schedule/CreateScheduleRequestDTO';
+import type { LessonWithVideoDTO } from '../../../dtos/course/LessonDTO';
 
 /**
  * Formulário completo de criação manual de cronograma
@@ -27,11 +38,25 @@ import type { CreateScheduleRequestDTO } from '../../../dtos/schedule/CreateSche
  */
 export const ManualScheduleForm: React.FC = () => {
   const navigate = useNavigate();
-  const { state } = useManualSchedule();
+  const { state, allocateLesson, updateAllocation, removeAllocation, isLessonAllocated } = useManualSchedule();
   const { createSchedule, loading } = useCreateSchedule();
   const { addToast } = useToast();
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidation, setShowValidation] = useState(false);
+  const [draggedLesson, setDraggedLesson] = useState<LessonWithVideoDTO | null>(null);
+  const [editingLesson, setEditingLesson] = useState<{
+    lesson: LessonWithVideoDTO;
+    allocation: ScheduleItemAllocation;
+  } | null>(null);
+
+  // Configurar sensores para drag-and-drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Exigir movimento de 8px antes de iniciar o drag
+      },
+    })
+  );
 
   const handleSubmit = async () => {
     try {
@@ -63,8 +88,6 @@ export const ManualScheduleForm: React.FC = () => {
         courseId: null, // Manual schedule - not tied to a single course
         startDate: state.startDate!.toISOString(),
         endDate: state.endDate!.toISOString(),
-        studyDaysPerWeek: state.studyDaysPerWeek,
-        hoursPerDay: state.hoursPerDay,
         items: Array.from(state.allocations.values()).map(allocation => ({
           lessonId: allocation.lessonId,
           scheduledDate: allocation.scheduledDate.toISOString(),
@@ -132,9 +155,67 @@ export const ManualScheduleForm: React.FC = () => {
     }
   };
 
+  // Handlers de Drag-and-Drop
+  const handleDragStart = (event: any) => {
+    const { active } = event;
+    const lesson = active.data.current?.lesson;
+    if (lesson) {
+      setDraggedLesson(lesson);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setDraggedLesson(null);
+
+    if (!over) return;
+
+    // Extrair dados do drag
+    const lesson = active.data.current?.lesson as LessonWithVideoDTO;
+    const { date, timeSlot } = over.data.current as { date: Date; timeSlot: string };
+
+    if (!lesson || !date || !timeSlot) return;
+
+    // Criar alocação
+    const allocation: ScheduleItemAllocation = {
+      lessonId: lesson.id,
+      scheduledDate: date,
+      startTime: timeSlot,
+      duration: lesson.video?.duration || 60, // Default 60 min se não tiver vídeo
+    };
+
+    allocateLesson(lesson.id, allocation);
+  };
+
+  const handleDragCancel = () => {
+    setDraggedLesson(null);
+  };
+
+  const handleLessonClick = (lesson: LessonWithVideoDTO, allocation: ScheduleItemAllocation) => {
+    setEditingLesson({ lesson, allocation });
+  };
+
+  const handleSaveAllocation = (updates: Partial<ScheduleItemAllocation>) => {
+    if (editingLesson) {
+      updateAllocation(editingLesson.lesson.id, updates);
+    }
+  };
+
+  const handleDeleteAllocation = () => {
+    if (editingLesson) {
+      removeAllocation(editingLesson.lesson.id);
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Mensagens de validação */}
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
+      <div className="space-y-6">
+        {/* Mensagens de validação */}
       {showValidation && (
         <Card padding="lg">
           {validationErrors.length === 0 ? (
@@ -212,7 +293,7 @@ export const ManualScheduleForm: React.FC = () => {
       )}
 
       {/* Calendário */}
-      <WeekCalendar />
+      <WeekCalendar onLessonClick={handleLessonClick} />
 
       {/* Ações */}
       <Card padding="lg">
@@ -281,8 +362,31 @@ export const ManualScheduleForm: React.FC = () => {
         </div>
       </Card>
 
-      {/* Loading Overlay */}
-      {loading && <LoadingOverlay message="Criando cronograma..." />}
-    </div>
+        {/* Loading Overlay */}
+        {loading && <LoadingOverlay message="Criando cronograma..." />}
+      </div>
+
+      {/* Drag Overlay */}
+      <DragOverlay>
+        {draggedLesson ? (
+          <LessonCard
+            lesson={draggedLesson}
+            isAllocated={isLessonAllocated(draggedLesson.id)}
+          />
+        ) : null}
+      </DragOverlay>
+
+      {/* Modal de Edição */}
+      {editingLesson && (
+        <EditAllocationModal
+          lesson={editingLesson.lesson}
+          allocation={editingLesson.allocation}
+          isOpen={!!editingLesson}
+          onClose={() => setEditingLesson(null)}
+          onSave={handleSaveAllocation}
+          onDelete={handleDeleteAllocation}
+        />
+      )}
+    </DndContext>
   );
 };

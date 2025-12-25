@@ -1,4 +1,5 @@
 import type { ManualScheduleState } from '../../contexts/ManualScheduleContext';
+import { isValidDate, isDateInRange } from '../date/dateHelpers';
 
 export interface ValidationError {
   field: string;
@@ -38,6 +39,11 @@ export const validateManualSchedule = (state: ManualScheduleState): ValidationRe
       field: 'startDate',
       message: 'A data de início é obrigatória',
     });
+  } else if (!isValidDate(state.startDate)) {
+    errors.push({
+      field: 'startDate',
+      message: 'A data de início é inválida',
+    });
   }
 
   if (!state.endDate) {
@@ -45,28 +51,19 @@ export const validateManualSchedule = (state: ManualScheduleState): ValidationRe
       field: 'endDate',
       message: 'A data de término é obrigatória',
     });
+  } else if (!isValidDate(state.endDate)) {
+    errors.push({
+      field: 'endDate',
+      message: 'A data de término é inválida',
+    });
   }
 
-  if (state.startDate && state.endDate && state.startDate >= state.endDate) {
+  if (state.startDate && state.endDate &&
+      isValidDate(state.startDate) && isValidDate(state.endDate) &&
+      state.startDate >= state.endDate) {
     errors.push({
       field: 'endDate',
       message: 'A data de término deve ser posterior à data de início',
-    });
-  }
-
-  // Validar dias por semana
-  if (state.studyDaysPerWeek < 1 || state.studyDaysPerWeek > 7) {
-    errors.push({
-      field: 'studyDaysPerWeek',
-      message: 'Dias de estudo por semana deve ser entre 1 e 7',
-    });
-  }
-
-  // Validar horas por dia
-  if (state.hoursPerDay < 1 || state.hoursPerDay > 24) {
-    errors.push({
-      field: 'hoursPerDay',
-      message: 'Horas por dia deve ser entre 1 e 24',
     });
   }
 
@@ -88,11 +85,9 @@ export const validateManualSchedule = (state: ManualScheduleState): ValidationRe
   }
 
   // Validar se as alocações estão dentro do range de datas
-  if (state.startDate && state.endDate) {
+  if (state.startDate && state.endDate && isValidDate(state.startDate) && isValidDate(state.endDate)) {
     for (const [lessonId, allocation] of state.allocations.entries()) {
-      const allocDate = allocation.scheduledDate;
-
-      if (allocDate < state.startDate || allocDate > state.endDate) {
+      if (!isDateInRange(allocation.scheduledDate, state.startDate, state.endDate)) {
         const lesson = state.selectedLessons.get(lessonId);
         errors.push({
           field: 'allocations',

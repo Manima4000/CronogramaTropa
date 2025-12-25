@@ -13,8 +13,6 @@ export class PrismaScheduleRepository implements IScheduleRepository {
         courseId: data.courseId,
         startDate: data.startDate,
         endDate: data.endDate,
-        studyDaysPerWeek: data.studyDaysPerWeek,
-        hoursPerDay: data.hoursPerDay,
       },
     });
 
@@ -25,8 +23,6 @@ export class PrismaScheduleRepository implements IScheduleRepository {
       schedule.courseId,
       schedule.startDate,
       schedule.endDate,
-      schedule.studyDaysPerWeek,
-      schedule.hoursPerDay,
       schedule.createdAt,
       schedule.updatedAt
     );
@@ -46,8 +42,6 @@ export class PrismaScheduleRepository implements IScheduleRepository {
           s.courseId,
           s.startDate,
           s.endDate,
-          s.studyDaysPerWeek,
-          s.hoursPerDay,
           s.createdAt,
           s.updatedAt
         )
@@ -68,8 +62,6 @@ export class PrismaScheduleRepository implements IScheduleRepository {
       schedule.courseId,
       schedule.startDate,
       schedule.endDate,
-      schedule.studyDaysPerWeek,
-      schedule.hoursPerDay,
       schedule.createdAt,
       schedule.updatedAt
     );
@@ -91,8 +83,6 @@ export class PrismaScheduleRepository implements IScheduleRepository {
       schedule.courseId,
       schedule.startDate,
       schedule.endDate,
-      schedule.studyDaysPerWeek,
-      schedule.hoursPerDay,
       schedule.createdAt,
       schedule.updatedAt
     );

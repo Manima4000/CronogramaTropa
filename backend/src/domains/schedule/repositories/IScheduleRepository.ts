@@ -7,8 +7,6 @@ export interface CreateScheduleData {
   courseId: number;
   startDate: Date;
   endDate: Date;
-  studyDaysPerWeek: number;
-  hoursPerDay: number;
 }
 
 // DTO para atualização de Schedule (dados primitivos)
@@ -18,8 +16,6 @@ export interface UpdateScheduleData {
   courseId?: number;
   startDate?: Date;
   endDate?: Date;
-  studyDaysPerWeek?: number;
-  hoursPerDay?: number;
 }
 
 // Interface Segregation Principle (I do SOLID)

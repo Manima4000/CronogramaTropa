@@ -4,8 +4,6 @@ export interface CreateScheduleRequestDTO {
   courseId?: number | null;
   startDate: string; // ISO 8601 date
   endDate: string;   // ISO 8601 date
-  studyDaysPerWeek: number; // 1-7
-  hoursPerDay: number;      // >= 1
   items: ScheduleItemInputDTO[];
 }
 

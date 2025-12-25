@@ -92,8 +92,6 @@ model Schedule {
   course           Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
   startDate        DateTime       @map("start_date")
   endDate          DateTime       @map("end_date")
-  studyDaysPerWeek Int            @map("study_days_per_week")
-  hoursPerDay      Int            @map("hours_per_day")
   items            ScheduleItem[]
   createdAt        DateTime       @default(now()) @map("created_at")
   updatedAt        DateTime       @updatedAt @map("updated_at")

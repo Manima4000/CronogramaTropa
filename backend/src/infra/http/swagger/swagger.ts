@@ -62,17 +62,6 @@ const swaggerOptions: swaggerJsDoc.Options = {
               format: 'date-time',
               description: 'Data de término',
             },
-            studyDaysPerWeek: {
-              type: 'integer',
-              description: 'Dias de estudo por semana',
-              minimum: 1,
-              maximum: 7,
-            },
-            hoursPerDay: {
-              type: 'integer',
-              description: 'Horas de estudo por dia',
-              minimum: 1,
-            },
             createdAt: {
               type: 'string',
               format: 'date-time',
@@ -119,7 +108,7 @@ const swaggerOptions: swaggerJsDoc.Options = {
         },
         CreateScheduleRequest: {
           type: 'object',
-          required: ['title', 'courseId', 'startDate', 'endDate', 'studyDaysPerWeek', 'hoursPerDay'],
+          required: ['title', 'startDate', 'endDate', 'items'],
           properties: {
             title: {
               type: 'string',
@@ -132,9 +121,10 @@ const swaggerOptions: swaggerJsDoc.Options = {
               example: 'Cronograma para aprender Python em 30 dias',
             },
             courseId: {
-              type: 'string',
-              description: 'ID do curso',
-              example: 'course-123',
+              type: 'integer',
+              nullable: true,
+              description: 'ID do curso (opcional para cronogramas manuais)',
+              example: null,
             },
             startDate: {
               type: 'string',
@@ -148,18 +138,36 @@ const swaggerOptions: swaggerJsDoc.Options = {
               description: 'Data de término',
               example: '2025-01-31T23:59:59Z',
             },
-            studyDaysPerWeek: {
-              type: 'integer',
-              description: 'Dias de estudo por semana',
-              minimum: 1,
-              maximum: 7,
-              example: 5,
-            },
-            hoursPerDay: {
-              type: 'integer',
-              description: 'Horas de estudo por dia',
-              minimum: 1,
-              example: 2,
+            items: {
+              type: 'array',
+              description: 'Itens do cronograma (aulas agendadas)',
+              items: {
+                type: 'object',
+                required: ['lessonId', 'scheduledDate', 'startTime', 'duration'],
+                properties: {
+                  lessonId: {
+                    type: 'integer',
+                    description: 'ID da aula',
+                    example: 123,
+                  },
+                  scheduledDate: {
+                    type: 'string',
+                    format: 'date-time',
+                    description: 'Data agendada',
+                    example: '2025-01-01T00:00:00Z',
+                  },
+                  startTime: {
+                    type: 'string',
+                    description: 'Hora de início (formato HH:mm)',
+                    example: '14:30',
+                  },
+                  duration: {
+                    type: 'integer',
+                    description: 'Duração em minutos',
+                    example: 60,
+                  },
+                },
+              },
             },
           },
         },
