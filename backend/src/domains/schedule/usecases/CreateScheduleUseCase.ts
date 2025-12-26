@@ -3,6 +3,7 @@ import { IScheduleItemRepository } from '../repositories/IScheduleItemRepository
 import { ICourseRepository } from '../../course/repositories/ICourseRepository';
 import { ILessonRepository } from '../../lesson/repositories/ILessonRepository';
 import { Schedule } from '../entities/Schedule';
+import { ScheduleItem } from '../entities/ScheduleItem';
 import { AppError } from '../../../shared/errors/AppError';
 
 // DTO para item do cronograma (lesson + data agendada + hora)
@@ -23,6 +24,12 @@ export interface CreateScheduleInput {
   items: ScheduleItemInput[];
 }
 
+// DTO de retorno incluindo schedule e items criados
+export interface CreateScheduleOutput {
+  schedule: Schedule;
+  items: ScheduleItem[];
+}
+
 // Single Responsibility Principle (S do SOLID)
 // Cada Use Case tem UMA responsabilidade específica - orquestrar a criação do cronograma
 export class CreateScheduleUseCase {
@@ -33,13 +40,13 @@ export class CreateScheduleUseCase {
     private lessonRepository: ILessonRepository
   ) {}
 
-  async execute(input: CreateScheduleInput): Promise<Schedule> {
+  async execute(input: CreateScheduleInput): Promise<CreateScheduleOutput> {
     // 1. Validar se há items
     if (!input.items || input.items.length === 0) {
       throw new AppError('At least one lesson must be scheduled', 400);
     }
 
-    // 3. Validar se todas as lessons existem
+    // 2. Validar se todas as lessons existem
     const lessonIds = input.items.map((item) => item.lessonId);
     const lessonsPromises = lessonIds.map((id) =>
       this.lessonRepository.findById(id)
@@ -64,7 +71,7 @@ export class CreateScheduleUseCase {
       endDate: input.endDate,
     });
 
-    // 5. Criar os schedule items (validações da entidade ScheduleItem serão executadas no construtor)
+    // 4. Criar os schedule items (validações da entidade ScheduleItem serão executadas no construtor)
     await this.scheduleItemRepository.createMany(
       input.items.map((item) => ({
         scheduleId: schedule.id,
@@ -76,7 +83,14 @@ export class CreateScheduleUseCase {
       }))
     );
 
-    return schedule;
+    // 5. Buscar os items recém-criados para retornar
+    const scheduleItems = await this.scheduleItemRepository.findByScheduleId(schedule.id);
+
+    // 6. Retornar schedule com items no formato esperado pelo frontend
+    return {
+      schedule,
+      items: scheduleItems,
+    };
   }
 }
 

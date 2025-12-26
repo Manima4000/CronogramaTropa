@@ -34,7 +34,7 @@ export const Header: React.FC = () => {
                   flex items-center space-x-2 px-4 py-2 rounded transition-colors duration-200
                   ${
                     isActive(link.path)
-                      ? 'bg-military-green-dark text-white'
+                      ? 'bg-military-khaki-light text-military-green-dark font-bold'
                       : 'text-military-khaki-light hover:bg-military-green-dark hover:text-white'
                   }
                 `.trim()}

@@ -18,9 +18,9 @@ export const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'font-semibold rounded transition-all duration-200 inline-flex items-center justify-center';
 
   const variantClasses = {
-    primary: 'bg-military-green hover:bg-military-green-dark text-white',
-    secondary: 'bg-military-khaki hover:bg-military-khaki-dark text-military-dark',
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
+    primary: 'bg-[#4a5d23] hover:bg-[#3a4a1a] !text-white shadow-md hover:shadow-lg font-bold',
+    secondary: 'bg-military-khaki hover:bg-military-khaki-dark text-military-dark shadow-sm',
+    danger: 'bg-red-600 hover:bg-red-700 !text-white shadow-md',
     ghost: 'bg-transparent hover:bg-military-green/10 text-military-green border border-military-green',
   };
 

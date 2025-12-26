@@ -12,6 +12,7 @@ import { useManualSchedule, type ScheduleItemAllocation } from '../../../context
 import { useCreateSchedule } from '../../../hooks/schedule/useCreateSchedule';
 import { useToast } from '../../../contexts/ToastContext';
 import { validateManualSchedule } from '../../../utils/validation/manualScheduleValidation';
+import { formatDateForInput } from '../../../utils/date/dateHelpers';
 import { ScheduleBasicInfo } from './ScheduleBasicInfo';
 import { CourseAndLessonSelector } from './CourseAndLessonSelector';
 import { SelectedLessonsPanel } from './SelectedLessonsPanel';
@@ -90,7 +91,7 @@ export const ManualScheduleForm: React.FC = () => {
         endDate: state.endDate!.toISOString(),
         items: Array.from(state.allocations.values()).map(allocation => ({
           lessonId: allocation.lessonId,
-          scheduledDate: allocation.scheduledDate.toISOString(),
+          scheduledDate: formatDateForInput(allocation.scheduledDate), // YYYY-MM-DD apenas (sem hora)
           startTime: allocation.startTime,
           duration: allocation.duration,
         })),

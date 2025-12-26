@@ -1,6 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils/constants/routes';
+import { Button } from '../../shared/ui/Button/Button';
+import { Card } from '../../shared/ui/Card/Card';
+import { Icon } from '../../shared/ui/Icon/Icon';
 
+/**
+ * Página inicial do sistema
+ * Responsabilidade:
+ * - Apresentar o sistema ao usuário
+ * - Fornecer navegação rápida para funcionalidades principais
+ * - Destacar features do sistema
+ */
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -15,54 +25,56 @@ export const HomePage: React.FC = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
+          <Button
+            variant="primary"
+            size="lg"
             onClick={() => navigate(ROUTES.schedules.create)}
-            className="bg-military-green hover:bg-military-green-dark text-white font-semibold px-8 py-3 rounded transition-all duration-200 shadow-lg"
+            icon="plus-circle"
           >
-            <i className="bi bi-plus-circle mr-2"></i>
             Criar Novo Cronograma
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="secondary"
+            size="lg"
             onClick={() => navigate(ROUTES.schedules.list)}
-            className="bg-white hover:bg-military-khaki-light text-military-dark font-semibold px-8 py-3 rounded transition-all duration-200 border-2 border-military-gray"
+            icon="calendar-check"
           >
-            <i className="bi bi-calendar-check mr-2"></i>
             Ver Meus Cronogramas
-          </button>
+          </Button>
         </div>
 
         {/* Features */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-          <div className="p-6 bg-white rounded-lg shadow-md">
-            <i className="bi bi-pencil-square text-3xl text-military-green mb-3"></i>
+          <Card padding="lg">
+            <Icon name="pencil-square" size="sm" className="text-military-green mb-3" />
             <h3 className="text-lg font-semibold text-military-dark mb-2">
               Criação Manual
             </h3>
             <p className="text-sm text-military-gray">
               Crie cronogramas personalizados com drag-and-drop para controle total
             </p>
-          </div>
+          </Card>
 
-          <div className="p-6 bg-white rounded-lg shadow-md">
-            <i className="bi bi-calendar-week text-3xl text-military-green mb-3"></i>
+          <Card padding="lg">
+            <Icon name="calendar-week" size="sm" className="text-military-green mb-3" />
             <h3 className="text-lg font-semibold text-military-dark mb-2">
               Múltiplos Cursos
             </h3>
             <p className="text-sm text-military-gray">
               Selecione aulas de diferentes cursos e organize em um único cronograma
             </p>
-          </div>
+          </Card>
 
-          <div className="p-6 bg-white rounded-lg shadow-md">
-            <i className="bi bi-graph-up text-3xl text-military-green mb-3"></i>
+          <Card padding="lg">
+            <Icon name="graph-up" size="sm" className="text-military-green mb-3" />
             <h3 className="text-lg font-semibold text-military-dark mb-2">
               Visualização
             </h3>
             <p className="text-sm text-military-gray">
               Acompanhe e gerencie seus cronogramas de forma organizada
             </p>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
