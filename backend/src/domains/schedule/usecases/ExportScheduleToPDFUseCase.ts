@@ -17,7 +17,7 @@ export class ExportScheduleToPDFUseCase {
     private pdfProvider: IPDFProvider
   ) {}
 
-  async execute(scheduleId: number): Promise<Buffer> {
+  async execute(scheduleId: number, hideScheduledTimes?: boolean): Promise<Buffer> {
     const schedule = await this.scheduleRepository.findById(scheduleId);
 
     if (!schedule) {
@@ -64,9 +64,12 @@ export class ExportScheduleToPDFUseCase {
       })
     );
 
-    return await this.pdfProvider.generateSchedulePDF({
-      schedule,
-      items: itemsWithLessons,
-    });
+    return await this.pdfProvider.generateSchedulePDF(
+      {
+        schedule,
+        items: itemsWithLessons,
+      },
+      { hideScheduledTimes }
+    );
   }
 }

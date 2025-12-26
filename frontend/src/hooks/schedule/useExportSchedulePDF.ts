@@ -4,7 +4,7 @@ import type { ApiErrorDTO } from '../../dtos/common/ApiErrorDTO';
 import { useToast } from '../common/useToast';
 
 interface UseExportSchedulePDFReturn {
-  exportPDF: (id: number, title: string) => Promise<void>;
+  exportPDF: (id: number, title: string, hideScheduledTimes?: boolean) => Promise<void>;
   loading: boolean;
   error: ApiErrorDTO | null;
 }
@@ -15,12 +15,12 @@ export const useExportSchedulePDF = (): UseExportSchedulePDFReturn => {
   const { addToast } = useToast();
 
   const exportPDF = useCallback(
-    async (id: number, title: string): Promise<void> => {
+    async (id: number, title: string, hideScheduledTimes?: boolean): Promise<void> => {
       try {
         setLoading(true);
         setError(null);
 
-        const blob = await scheduleService.exportToPDF(id);
+        const blob = await scheduleService.exportToPDF(id, hideScheduledTimes);
 
         // Criar link para download
         const url = window.URL.createObjectURL(blob);

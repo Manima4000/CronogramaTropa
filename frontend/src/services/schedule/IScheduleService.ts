@@ -8,5 +8,5 @@ export interface IScheduleService {
   getById(id: number): Promise<ScheduleWithItemsDTO>;
   list(): Promise<ScheduleDTO[]>;
   delete(id: number): Promise<void>;
-  exportToPDF(id: number): Promise<Blob>;
+  exportToPDF(id: number, hideScheduledTimes?: boolean): Promise<Blob>;
 }

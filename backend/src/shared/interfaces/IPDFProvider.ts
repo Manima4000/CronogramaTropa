@@ -23,7 +23,11 @@ export interface ScheduleWithItems {
   items: ScheduleItemWithLesson[];
 }
 
+export interface PDFOptions {
+  hideScheduledTimes?: boolean;
+}
+
 // Dependency Inversion Principle (D do SOLID)
 export interface IPDFProvider {
-  generateSchedulePDF(data: ScheduleWithItems): Promise<Buffer>;
+  generateSchedulePDF(data: ScheduleWithItems, options?: PDFOptions): Promise<Buffer>;
 }

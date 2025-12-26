@@ -1,10 +1,11 @@
 import PDFDocument from 'pdfkit';
-import { IPDFProvider, ScheduleWithItems } from '../../../shared/interfaces/IPDFProvider';
+import { IPDFProvider, ScheduleWithItems, PDFOptions } from '../../../shared/interfaces/IPDFProvider';
 
 // Dependency Inversion Principle (D do SOLID)
 export class PDFProvider implements IPDFProvider {
-  async generateSchedulePDF(data: ScheduleWithItems): Promise<Buffer> {
+  async generateSchedulePDF(data: ScheduleWithItems, options?: PDFOptions): Promise<Buffer> {
     const { schedule, items } = data;
+    const hideScheduledTimes = options?.hideScheduledTimes || false;
 
     return new Promise((resolve, reject) => {
       try {
@@ -15,6 +16,23 @@ export class PDFProvider implements IPDFProvider {
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
+
+        // Helper para calcular horário final
+        const calculateEndTime = (startTime: string, duration: number): string => {
+          const [hours, minutes] = startTime.split(':').map(Number);
+          const totalMinutes = hours * 60 + minutes + duration;
+          const endHours = Math.floor(totalMinutes / 60);
+          const endMinutes = totalMinutes % 60;
+          return `${endHours}h${endMinutes.toString().padStart(2, '0')}`;
+        };
+
+        // Helper para formatar horário
+        const formatTimeRange = (startTime: string, duration: number): string => {
+          const [hours, minutes] = startTime.split(':').map(Number);
+          const startFormatted = minutes > 0 ? `${hours}h${minutes.toString().padStart(2, '0')}` : `${hours}h`;
+          const endTime = calculateEndTime(startTime, duration);
+          return `${startFormatted}-${endTime}`;
+        };
 
         // Cores do tema militar
         const colors = {
@@ -72,11 +90,20 @@ export class PDFProvider implements IPDFProvider {
           // Cabeçalho da tabela
           const tableTop = doc.y;
           doc.fontSize(8).fillColor(colors.gray);
-          doc.text('Horário', 50, tableTop, { width: 40 });
-          doc.text('Duração', 95, tableTop, { width: 45 });
-          doc.text('Curso', 145, tableTop, { width: 100 });
-          doc.text('Módulo', 250, tableTop, { width: 90 });
-          doc.text('Aula', 345, tableTop, { width: 200 });
+
+          if (!hideScheduledTimes) {
+            doc.text('Horário', 50, tableTop, { width: 60 });
+            doc.text('Duração', 115, tableTop, { width: 45 });
+            doc.text('Curso', 165, tableTop, { width: 90 });
+            doc.text('Módulo', 260, tableTop, { width: 85 });
+            doc.text('Aula', 350, tableTop, { width: 195 });
+          } else {
+            doc.text('Duração', 50, tableTop, { width: 45 });
+            doc.text('Curso', 100, tableTop, { width: 110 });
+            doc.text('Módulo', 215, tableTop, { width: 100 });
+            doc.text('Aula', 320, tableTop, { width: 225 });
+          }
+
           doc.moveDown(0.5);
 
           // Linha separadora
@@ -84,6 +111,8 @@ export class PDFProvider implements IPDFProvider {
           doc.moveDown(0.3);
 
           const dayItems = itemsByDate[date];
+          let dayTotalMinutes = 0;
+
           dayItems.forEach((item, itemIndex) => {
             // Verificar se precisa de nova página
             if (doc.y > 720) {
@@ -92,17 +121,37 @@ export class PDFProvider implements IPDFProvider {
 
             const y = doc.y;
 
-            // Horário, duração, curso, módulo e aula
+            // Acumular minutos do dia
+            dayTotalMinutes += item.duration;
+
+            // Renderizar colunas
             doc.fontSize(8).fillColor(colors.dark);
-            doc.text(item.startTime, 50, y, { width: 40 });
-            doc.text(`${item.duration}m`, 95, y, { width: 45 });
-            doc.text(item.course.name, 145, y, { width: 100 });
-            doc.text(item.section.name, 250, y, { width: 90 });
-            doc.text(item.lesson.title, 345, y, { width: 200 });
+
+            if (!hideScheduledTimes) {
+              doc.text(formatTimeRange(item.startTime, item.duration), 50, y, { width: 60 });
+              doc.text(`${item.duration}m`, 115, y, { width: 45 });
+              doc.text(item.course.name, 165, y, { width: 90 });
+              doc.text(item.section.name, 260, y, { width: 85 });
+              doc.text(item.lesson.title, 350, y, { width: 195 });
+            } else {
+              doc.text(`${item.duration}m`, 50, y, { width: 45 });
+              doc.text(item.course.name, 100, y, { width: 110 });
+              doc.text(item.section.name, 215, y, { width: 100 });
+              doc.text(item.lesson.title, 320, y, { width: 225 });
+            }
 
             doc.moveDown(0.7);
           });
 
+          // Adicionar total de minutos do dia
+          doc.moveDown(0.3);
+          const totalHours = Math.floor(dayTotalMinutes / 60);
+          const totalMins = dayTotalMinutes % 60;
+          const totalText = totalHours > 0
+            ? `Total do dia: ${totalHours}h ${totalMins}min (${dayTotalMinutes} minutos)`
+            : `Total do dia: ${totalMins}min`;
+
+          doc.fontSize(9).fillColor(colors.primary).text(totalText, 50, doc.y, { align: 'right' });
           doc.moveDown(1);
         });
 

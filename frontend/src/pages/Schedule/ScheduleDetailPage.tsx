@@ -28,6 +28,7 @@ export const ScheduleDetailPage: React.FC = () => {
   const { deleteSchedule, loading: deleting } = useDeleteSchedule();
   const { exportPDF, loading: exporting } = useExportSchedulePDF();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [hideScheduledTimes, setHideScheduledTimes] = useState(false);
 
   const formatDate = (dateString: string) => {
     try {
@@ -72,7 +73,7 @@ export const ScheduleDetailPage: React.FC = () => {
 
   const handleExportPDF = async () => {
     if (!schedule) return;
-    await exportPDF(Number(id), schedule.schedule.title);
+    await exportPDF(Number(id), schedule.schedule.title, hideScheduledTimes);
   };
 
   // Agrupar items por data
@@ -172,25 +173,36 @@ export const ScheduleDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              icon="file-earmark-pdf"
-              onClick={handleExportPDF}
-              loading={exporting}
-            >
-              Exportar PDF
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              icon="trash"
-              onClick={handleDeleteClick}
-              loading={deleting}
-            >
-              Deletar
-            </Button>
+          <div className="flex flex-col items-end gap-2">
+            <label className="flex items-center gap-2 text-sm text-military-gray cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideScheduledTimes}
+                onChange={(e) => setHideScheduledTimes(e.target.checked)}
+                className="w-4 h-4 rounded border-military-gray text-military-green focus:ring-military-green cursor-pointer"
+              />
+              Ocultar horários no PDF
+            </label>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                icon="file-earmark-pdf"
+                onClick={handleExportPDF}
+                loading={exporting}
+              >
+                Exportar PDF
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                icon="trash"
+                onClick={handleDeleteClick}
+                loading={deleting}
+              >
+                Deletar
+              </Button>
+            </div>
           </div>
         </div>
       </div>

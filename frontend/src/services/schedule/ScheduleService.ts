@@ -36,9 +36,11 @@ export class ScheduleService implements IScheduleService {
     await this.httpClient.delete(ENDPOINTS.schedules.byId(id));
   }
 
-  async exportToPDF(id: number): Promise<Blob> {
+  async exportToPDF(id: number, hideScheduledTimes?: boolean): Promise<Blob> {
+    const params = hideScheduledTimes ? { hideScheduledTimes: 'true' } : {};
     const response = await this.httpClient.get(ENDPOINTS.schedules.exportPDF(id), {
       responseType: 'blob',
+      params,
     });
     return response.data;
   }

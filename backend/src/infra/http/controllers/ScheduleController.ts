@@ -82,8 +82,9 @@ export class ScheduleController {
   async exportToPDF(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       const { id } = req.params;
+      const hideScheduledTimes = req.query.hideScheduledTimes === 'true';
 
-      const pdfBuffer = await this.exportScheduleToPDFUseCase.execute(Number(id));
+      const pdfBuffer = await this.exportScheduleToPDFUseCase.execute(Number(id), hideScheduledTimes);
 
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=cronograma-${id}.pdf`);
