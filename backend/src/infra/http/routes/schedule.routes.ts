@@ -4,6 +4,7 @@ import { PrismaScheduleRepository } from '../../database/prisma/repositories/Pri
 import { PrismaScheduleItemRepository } from '../../database/prisma/repositories/PrismaScheduleItemRepository';
 import { PrismaCourseRepository } from '../../database/prisma/repositories/PrismaCourseRepository';
 import { PrismaLessonRepository } from '../../database/prisma/repositories/PrismaLessonRepository';
+import { PrismaSectionRepository } from '../../database/prisma/repositories/PrismaSectionRepository';
 import { CreateScheduleUseCase } from '../../../domains/schedule/usecases/CreateScheduleUseCase';
 import { GetScheduleByIdUseCase } from '../../../domains/schedule/usecases/GetScheduleByIdUseCase';
 import { ListSchedulesUseCase } from '../../../domains/schedule/usecases/ListSchedulesUseCase';
@@ -19,6 +20,7 @@ const scheduleRepository = new PrismaScheduleRepository();
 const scheduleItemRepository = new PrismaScheduleItemRepository();
 const courseRepository = new PrismaCourseRepository();
 const lessonRepository = new PrismaLessonRepository();
+const sectionRepository = new PrismaSectionRepository();
 const pdfProvider = new PDFProvider();
 
 const createScheduleUseCase = new CreateScheduleUseCase(
@@ -44,6 +46,9 @@ const deleteScheduleUseCase = new DeleteScheduleUseCase(
 const exportScheduleToPDFUseCase = new ExportScheduleToPDFUseCase(
   scheduleRepository,
   scheduleItemRepository,
+  lessonRepository,
+  sectionRepository,
+  courseRepository,
   pdfProvider
 );
 

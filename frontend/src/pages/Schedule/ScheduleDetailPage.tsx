@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useScheduleDetails } from '../../hooks/schedule/useScheduleDetails';
 import { useDeleteSchedule } from '../../hooks/schedule/useDeleteSchedule';
+import { useExportSchedulePDF } from '../../hooks/schedule/useExportSchedulePDF';
 import { Button } from '../../shared/ui/Button/Button';
 import { Card } from '../../shared/ui/Card/Card';
 import { Icon } from '../../shared/ui/Icon/Icon';
@@ -25,6 +26,7 @@ export const ScheduleDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { schedule, loading, error } = useScheduleDetails(Number(id));
   const { deleteSchedule, loading: deleting } = useDeleteSchedule();
+  const { exportPDF, loading: exporting } = useExportSchedulePDF();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -66,6 +68,11 @@ export const ScheduleDetailPage: React.FC = () => {
       setShowDeleteDialog(false);
       navigate(ROUTES.schedules.list);
     }
+  };
+
+  const handleExportPDF = async () => {
+    if (!schedule) return;
+    await exportPDF(Number(id), schedule.schedule.title);
   };
 
   // Agrupar items por data
@@ -166,6 +173,15 @@ export const ScheduleDetailPage: React.FC = () => {
           </div>
 
           <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              icon="file-earmark-pdf"
+              onClick={handleExportPDF}
+              loading={exporting}
+            >
+              Exportar PDF
+            </Button>
             <Button
               variant="danger"
               size="sm"

@@ -1,9 +1,26 @@
 import { Schedule } from '../../domains/schedule/entities/Schedule';
-import { ScheduleItem } from '../../domains/schedule/entities/ScheduleItem';
+import { Lesson } from '../../domains/lesson/entities/Lesson';
+import { Section } from '../../domains/section/entities/Section';
+import { Course } from '../../domains/course/entities/Course';
+
+export interface ScheduleItemWithLesson {
+  id: number;
+  scheduleId: number;
+  lessonId: number;
+  scheduledDate: Date;
+  startTime: string;
+  duration: number;
+  completed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  lesson: Lesson;
+  section: Section;
+  course: Course;
+}
 
 export interface ScheduleWithItems {
   schedule: Schedule;
-  items: ScheduleItem[];
+  items: ScheduleItemWithLesson[];
 }
 
 // Dependency Inversion Principle (D do SOLID)
