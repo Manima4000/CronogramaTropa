@@ -271,7 +271,7 @@ export const ManualScheduleForm: React.FC = () => {
           </h2>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <CourseAndLessonSelector />
         <SelectedLessonsPanel />
       </div>

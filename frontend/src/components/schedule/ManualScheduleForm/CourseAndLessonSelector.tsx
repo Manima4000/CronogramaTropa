@@ -22,7 +22,7 @@ export const CourseAndLessonSelector: React.FC = () => {
         Seleção de Aulas
       </h2>
 
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-150 overflow-y-auto pr-2">
         {courses.map(course => (
           <CourseItem key={course.id} course={course} />
         ))}

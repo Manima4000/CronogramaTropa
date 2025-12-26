@@ -52,7 +52,7 @@ export const SelectedLessonsPanel: React.FC = () => {
           <p className="text-sm mt-1">Selecione aulas para começar</p>
         </div>
       ) : (
-        <div className="space-y-2 max-h-96 overflow-y-auto">
+        <div className="space-y-2 max-h-112.5 overflow-y-auto pr-2">
           {selectedLessonsArray.map(lesson => {
             const allocated = isLessonAllocated(lesson.id);
             const duration = lesson.video?.duration;
