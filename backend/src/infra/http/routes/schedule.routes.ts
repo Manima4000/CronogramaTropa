@@ -63,8 +63,11 @@ const scheduleController = new ScheduleController(
  *   post:
  *     tags:
  *       - Schedules
- *     summary: Criar um novo cronograma
- *     description: Cria um novo cronograma de estudos para um curso específico
+ *     summary: Criar um novo cronograma manual
+ *     description: |
+ *       Cria um cronograma de estudos personalizado com aulas selecionadas manualmente.
+ *       O cronograma pode incluir aulas de múltiplos cursos.
+ *       Retorna o cronograma criado com todos os itens agendados.
  *     requestBody:
  *       required: true
  *       content:
@@ -86,13 +89,13 @@ const scheduleController = new ScheduleController(
  *                   items:
  *                     $ref: '#/components/schemas/ScheduleItem'
  *       400:
- *         description: Dados inválidos
+ *         description: Dados inválidos (validação falhou)
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *       404:
- *         description: Curso não encontrado
+ *         description: Uma ou mais lessons não encontradas
  *         content:
  *           application/json:
  *             schema:
@@ -126,19 +129,18 @@ scheduleRoutes.get('/', (req, res, next) => scheduleController.list(req, res, ne
  *   get:
  *     tags:
  *       - Schedules
- *     summary: Buscar cronograma por ID
- *     description: Retorna um cronograma específico com seus itens
+ *     summary: Buscar cronograma por ID com detalhes completos
+ *     description: Retorna um cronograma específico com seus itens enriquecidos (incluindo dados das lessons)
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *         description: ID do cronograma
  *     responses:
  *       200:
- *         description: Cronograma encontrado
+ *         description: Cronograma encontrado com detalhes completos
  *         content:
  *           application/json:
  *             schema:
@@ -149,7 +151,7 @@ scheduleRoutes.get('/', (req, res, next) => scheduleController.list(req, res, ne
  *                 items:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/ScheduleItem'
+ *                     $ref: '#/components/schemas/ScheduleItemWithLesson'
  *       404:
  *         description: Cronograma não encontrado
  *         content:
@@ -166,14 +168,13 @@ scheduleRoutes.get('/:id', (req, res, next) => scheduleController.getById(req, r
  *     tags:
  *       - Schedules
  *     summary: Deletar cronograma
- *     description: Remove um cronograma e todos os seus itens
+ *     description: Remove um cronograma e todos os seus itens (CASCADE)
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *         description: ID do cronograma
  *     responses:
  *       204:
@@ -194,14 +195,13 @@ scheduleRoutes.delete('/:id', (req, res, next) => scheduleController.delete(req,
  *     tags:
  *       - Schedules
  *     summary: Exportar cronograma para PDF
- *     description: Gera e retorna um arquivo PDF do cronograma
+ *     description: Gera e retorna um arquivo PDF do cronograma para impressão/compartilhamento
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *         description: ID do cronograma
  *     responses:
  *       200:
