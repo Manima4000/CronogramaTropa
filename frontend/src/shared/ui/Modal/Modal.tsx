@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({
       onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" />
+      <div className="absolute inset-0 backdrop-blur-md" />
 
       {/* Modal Content */}
       <div

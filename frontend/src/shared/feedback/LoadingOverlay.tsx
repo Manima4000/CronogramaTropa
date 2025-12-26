@@ -15,7 +15,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   message = 'Carregando...',
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md">
       <div className="bg-white rounded-lg shadow-xl p-8 flex flex-col items-center gap-4 max-w-sm mx-4">
         <div className="relative">
           <div className="w-16 h-16 border-4 border-military-gray border-t-military-green rounded-full animate-spin"></div>
