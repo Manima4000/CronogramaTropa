@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useScheduleDetails } from '../../hooks/schedule/useScheduleDetails';
+import { useDeleteSchedule } from '../../hooks/schedule/useDeleteSchedule';
 import { Button } from '../../shared/ui/Button/Button';
 import { Card } from '../../shared/ui/Card/Card';
 import { Icon } from '../../shared/ui/Icon/Icon';
 import { LoadingOverlay } from '../../shared/feedback/LoadingOverlay';
+import { ConfirmDialog } from '../../shared/ui/Modal/ConfirmDialog';
 import { ROUTES } from '../../utils/constants/routes';
 import type { ScheduleItemWithLessonDTO } from '../../dtos/schedule/ScheduleItemDTO';
 
@@ -21,6 +24,8 @@ export const ScheduleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { schedule, loading, error } = useScheduleDetails(Number(id));
+  const { deleteSchedule, loading: deleting } = useDeleteSchedule();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const formatDate = (dateString: string) => {
     try {
@@ -51,6 +56,18 @@ export const ScheduleDetailPage: React.FC = () => {
     return `${hours}h ${mins}min`;
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    const success = await deleteSchedule(Number(id));
+    if (success) {
+      setShowDeleteDialog(false);
+      navigate(ROUTES.schedules.list);
+    }
+  };
+
   // Agrupar items por data
   const groupItemsByDate = (items: ScheduleItemWithLessonDTO[]) => {
     const grouped = items.reduce((acc, item) => {
@@ -75,15 +92,11 @@ export const ScheduleDetailPage: React.FC = () => {
     if (!schedule) return null;
 
     const totalItems = schedule.items.length;
-    const completedItems = schedule.items.filter(item => item.completed).length;
     const totalDuration = schedule.items.reduce((sum, item) => sum + item.duration, 0);
-    const progressPercent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
     return {
       totalItems,
-      completedItems,
       totalDuration,
-      progressPercent,
     };
   };
 
@@ -153,7 +166,13 @@ export const ScheduleDetailPage: React.FC = () => {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="danger" size="sm" icon="trash">
+            <Button
+              variant="danger"
+              size="sm"
+              icon="trash"
+              onClick={handleDeleteClick}
+              loading={deleting}
+            >
               Deletar
             </Button>
           </div>
@@ -162,7 +181,7 @@ export const ScheduleDetailPage: React.FC = () => {
 
       {/* Estatísticas */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card padding="lg">
             <div className="flex items-center justify-between">
               <div>
@@ -176,30 +195,10 @@ export const ScheduleDetailPage: React.FC = () => {
           <Card padding="lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-military-gray">Concluídas</p>
-                <p className="text-2xl font-bold text-military-green mt-1">{stats.completedItems}</p>
-              </div>
-              <Icon name="check-circle-fill" size="lg" className="text-military-green" />
-            </div>
-          </Card>
-
-          <Card padding="lg">
-            <div className="flex items-center justify-between">
-              <div>
                 <p className="text-sm text-military-gray">Duração Total</p>
                 <p className="text-2xl font-bold text-military-dark mt-1">{formatDuration(stats.totalDuration)}</p>
               </div>
               <Icon name="clock" size="lg" className="text-military-green" />
-            </div>
-          </Card>
-
-          <Card padding="lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-military-gray">Progresso</p>
-                <p className="text-2xl font-bold text-military-green mt-1">{stats.progressPercent}%</p>
-              </div>
-              <Icon name="graph-up" size="lg" className="text-military-green" />
             </div>
           </Card>
         </div>
@@ -220,20 +219,8 @@ export const ScheduleDetailPage: React.FC = () => {
               {itemsByDate[date].map(item => (
                 <div
                   key={item.id}
-                  className={`flex items-start gap-4 p-4 rounded border-2 transition-all ${
-                    item.completed
-                      ? 'bg-green-50 border-green-200'
-                      : 'bg-white border-military-light-gray hover:border-military-green'
-                  }`}
+                  className="flex items-start gap-4 p-4 rounded border-2 bg-white border-military-light-gray hover:border-military-green transition-all"
                 >
-                  <div className="shrink-0">
-                    {item.completed ? (
-                      <Icon name="check-circle-fill" size="lg" className="text-green-600" />
-                    ) : (
-                      <Icon name="circle" size="lg" className="text-military-gray" />
-                    )}
-                  </div>
-
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-military-dark mb-1">
                       {item.lesson.title}
@@ -255,16 +242,6 @@ export const ScheduleDetailPage: React.FC = () => {
                       )}
                     </div>
                   </div>
-
-                  <div className="shrink-0">
-                    <Button
-                      variant={item.completed ? 'secondary' : 'primary'}
-                      size="sm"
-                      icon={item.completed ? 'x-circle' : 'check-circle'}
-                    >
-                      {item.completed ? 'Desmarcar' : 'Concluir'}
-                    </Button>
-                  </div>
                 </div>
               ))}
             </div>
@@ -285,6 +262,19 @@ export const ScheduleDetailPage: React.FC = () => {
           </div>
         </Card>
       )}
+
+      {/* Modal de Confirmação de Exclusão */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+        title="Deletar Cronograma"
+        message={`Tem certeza que deseja deletar o cronograma "${schedule?.schedule.title}"? Esta ação não pode ser desfeita.`}
+        confirmText="Deletar"
+        cancelText="Cancelar"
+        variant="danger"
+        loading={deleting}
+      />
     </div>
   );
 };
