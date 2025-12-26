@@ -41,10 +41,17 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({ date, timeSlot, onLessonClic
     const lessons = [];
     const dateStr = formatDateObject(date, 'yyyy-MM-dd');
 
+    // Extrair apenas a hora do timeSlot (ignorar minutos)
+    const slotHour = timeSlot.split(':')[0];
+
     for (const [lessonId, allocation] of state.allocations.entries()) {
       const allocationDateStr = formatDateObject(allocation.scheduledDate, 'yyyy-MM-dd');
 
-      if (allocationDateStr === dateStr && allocation.startTime === timeSlot) {
+      // Extrair hora do startTime da alocação
+      const allocationHour = allocation.startTime.split(':')[0];
+
+      // Comparar data e hora (ignorando minutos)
+      if (allocationDateStr === dateStr && allocationHour === slotHour) {
         const lesson = state.selectedLessons.get(lessonId);
         if (lesson) {
           lessons.push({ lesson, allocation });
@@ -79,7 +86,7 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({ date, timeSlot, onLessonClic
                 {lesson.title}
               </div>
               <div className="text-military-gray">
-                {allocation.duration} min
+                {allocation.startTime} • {allocation.duration} min
               </div>
             </button>
           ))}
