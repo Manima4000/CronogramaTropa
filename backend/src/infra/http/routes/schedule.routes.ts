@@ -30,7 +30,8 @@ const createScheduleUseCase = new CreateScheduleUseCase(
 
 const getScheduleByIdUseCase = new GetScheduleByIdUseCase(
   scheduleRepository,
-  scheduleItemRepository
+  scheduleItemRepository,
+  lessonRepository
 );
 
 const listSchedulesUseCase = new ListSchedulesUseCase(scheduleRepository);
