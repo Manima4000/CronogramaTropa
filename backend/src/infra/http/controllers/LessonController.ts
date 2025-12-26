@@ -43,7 +43,16 @@ export class LessonController {
 
       const lessons = await this.getLessonsWithVideosBySectionUseCase.execute(Number(sectionId));
 
-      return res.json(lessons);
+      // Converter duração de segundos para minutos
+      const lessonsWithDurationInMinutes = lessons.map(lesson => ({
+        ...lesson,
+        video: lesson.video ? {
+          ...lesson.video,
+          duration: lesson.video.duration ? Math.round(lesson.video.duration / 60) : null
+        } : null
+      }));
+
+      return res.json(lessonsWithDurationInMinutes);
     } catch (error) {
       next(error);
     }
@@ -55,7 +64,16 @@ export class LessonController {
 
       const lessons = await this.getLessonsWithVideosByCourseUseCase.execute(Number(courseId));
 
-      return res.json(lessons);
+      // Converter duração de segundos para minutos
+      const lessonsWithDurationInMinutes = lessons.map(lesson => ({
+        ...lesson,
+        video: lesson.video ? {
+          ...lesson.video,
+          duration: lesson.video.duration ? Math.round(lesson.video.duration / 60) : null
+        } : null
+      }));
+
+      return res.json(lessonsWithDurationInMinutes);
     } catch (error) {
       next(error);
     }
