@@ -10,6 +10,7 @@ import type { LessonWithVideoDTO } from '../../../dtos/course/LessonDTO';
 
 interface WeekCalendarProps {
   onLessonClick?: (lesson: LessonWithVideoDTO, allocation: ScheduleItemAllocation) => void;
+  isDragging?: boolean;
 }
 
 /**
@@ -18,7 +19,7 @@ interface WeekCalendarProps {
  * - Orquestrar subcomponentes (Header, Grid, Footer)
  * - Delegar responsabilidades específicas para subcomponentes
  */
-export const WeekCalendar: React.FC<WeekCalendarProps> = ({ onLessonClick }) => {
+export const WeekCalendar: React.FC<WeekCalendarProps> = ({ onLessonClick, isDragging = false }) => {
   const { state } = useManualSchedule();
 
   const {
@@ -64,6 +65,7 @@ export const WeekCalendar: React.FC<WeekCalendarProps> = ({ onLessonClick }) => 
         weekDays={weekDays}
         timeSlots={timeSlots}
         onLessonClick={onLessonClick}
+        isDragging={isDragging}
       />
     </Card>
   );

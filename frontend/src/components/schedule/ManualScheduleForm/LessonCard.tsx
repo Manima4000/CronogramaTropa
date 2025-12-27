@@ -46,7 +46,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, isAllocated }) =
       className={`
         p-3 rounded border cursor-grab active:cursor-grabbing
         transition-all
-        ${isDragging ? 'opacity-50 shadow-lg scale-105' : ''}
+        ${isDragging ? 'opacity-0' : ''}
         ${isAllocated
           ? 'bg-green-50 border-green-200 cursor-not-allowed opacity-70'
           : 'bg-white border-military-gray hover:border-military-green hover:shadow-md'

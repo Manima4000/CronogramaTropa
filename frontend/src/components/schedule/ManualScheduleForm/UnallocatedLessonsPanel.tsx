@@ -4,6 +4,10 @@ import { Card } from '../../../shared/ui/Card/Card';
 import { Icon } from '../../../shared/ui/Icon/Icon';
 import { LessonCard } from './LessonCard';
 
+interface UnallocatedLessonsPanelProps {
+  isDragging?: boolean;
+}
+
 /**
  * Painel de aulas não alocadas
  * Responsabilidade:
@@ -11,7 +15,7 @@ import { LessonCard } from './LessonCard';
  * - Permitir drag-and-drop dessas aulas para o calendário
  * - Mostrar feedback visual quando não há aulas não alocadas
  */
-export const UnallocatedLessonsPanel: React.FC = () => {
+export const UnallocatedLessonsPanel: React.FC<UnallocatedLessonsPanelProps> = ({ isDragging = false }) => {
   const { getUnallocatedLessons, isLessonAllocated } = useManualSchedule();
   const unallocatedLessons = getUnallocatedLessons();
 
@@ -49,7 +53,7 @@ export const UnallocatedLessonsPanel: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className={`space-y-2 max-h-96 ${isDragging ? 'overflow-hidden' : 'overflow-y-auto'}`}>
             {unallocatedLessons.map(lesson => (
               <LessonCard
                 key={lesson.id}

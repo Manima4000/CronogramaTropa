@@ -5,13 +5,17 @@ import { prisma } from '../prisma';
 export class PrismaVideoRepository implements IVideoRepository {
   async create(video: Video): Promise<Video> {
     const created = await prisma.video.upsert({
-      where: { id: video.id },
+      where: {
+        id_lessonId: {
+          id: video.id,
+          lessonId: video.lessonId,
+        },
+      },
       update: {
         source: video.source,
         uid: video.uid,
         duration: video.duration,
         image: video.image,
-        lessonId: video.lessonId,
       },
       create: {
         id: video.id,
@@ -58,9 +62,14 @@ export class PrismaVideoRepository implements IVideoRepository {
     ));
   }
 
-  async findById(id: number): Promise<Video | null> {
+  async findById(id: number, lessonId: number): Promise<Video | null> {
     const video = await prisma.video.findUnique({
-      where: { id },
+      where: {
+        id_lessonId: {
+          id,
+          lessonId,
+        },
+      },
     });
     return video ? new Video(
       video.id,
@@ -86,15 +95,19 @@ export class PrismaVideoRepository implements IVideoRepository {
     ) : null;
   }
 
-  async update(id: number, data: Partial<Video>): Promise<Video> {
+  async update(id: number, lessonId: number, data: Partial<Video>): Promise<Video> {
     const updated = await prisma.video.update({
-      where: { id },
+      where: {
+        id_lessonId: {
+          id,
+          lessonId,
+        },
+      },
       data: {
         source: data.source,
         uid: data.uid,
         duration: data.duration,
         image: data.image,
-        lessonId: data.lessonId,
       },
     });
     return new Video(
@@ -107,9 +120,14 @@ export class PrismaVideoRepository implements IVideoRepository {
     );
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number, lessonId: number): Promise<void> {
     await prisma.video.delete({
-      where: { id },
+      where: {
+        id_lessonId: {
+          id,
+          lessonId,
+        },
+      },
     });
   }
 }

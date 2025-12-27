@@ -7,6 +7,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  pointerWithin,
 } from '@dnd-kit/core';
 import { useManualSchedule, type ScheduleItemAllocation } from '../../../contexts/ManualScheduleContext';
 import { useCreateSchedule } from '../../../hooks/schedule/useCreateSchedule';
@@ -211,6 +212,8 @@ export const ManualScheduleForm: React.FC = () => {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={pointerWithin}
+      autoScroll={false}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
@@ -290,11 +293,11 @@ export const ManualScheduleForm: React.FC = () => {
 
       {/* Aulas Não Alocadas */}
       {state.selectedLessons.size > 0 && (
-        <UnallocatedLessonsPanel />
+        <UnallocatedLessonsPanel isDragging={!!draggedLesson} />
       )}
 
       {/* Calendário */}
-      <WeekCalendar onLessonClick={handleLessonClick} />
+      <WeekCalendar onLessonClick={handleLessonClick} isDragging={!!draggedLesson} />
 
       {/* Ações */}
       <Card padding="lg">

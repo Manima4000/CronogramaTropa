@@ -8,6 +8,7 @@ interface WeekCalendarGridProps {
   weekDays: Date[];
   timeSlots: string[];
   onLessonClick?: (lesson: LessonWithVideoDTO, allocation: ScheduleItemAllocation) => void;
+  isDragging?: boolean;
 }
 
 /**
@@ -17,11 +18,11 @@ interface WeekCalendarGridProps {
  * - Gerenciar o layout responsivo
  * - Delegar a lógica de drag-and-drop e cliques para TimeSlot
  */
-export const WeekCalendarGrid: React.FC<WeekCalendarGridProps> = ({ weekDays, timeSlots, onLessonClick }) => {
+export const WeekCalendarGrid: React.FC<WeekCalendarGridProps> = ({ weekDays, timeSlots, onLessonClick, isDragging = false }) => {
   const gridColumns = `80px repeat(${weekDays.length}, minmax(150px, 1fr))`;
 
   return (
-    <div className="overflow-x-auto">
+    <div className={isDragging ? 'overflow-hidden' : 'overflow-x-auto'}>
       <div className="min-w-max">
         {/* Cabeçalho dos dias */}
         <div className="grid gap-2 mb-2" style={{ gridTemplateColumns: gridColumns }}>
