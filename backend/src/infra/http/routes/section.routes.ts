@@ -2,8 +2,12 @@ import { Router } from 'express';
 import { SectionController } from '../controllers/SectionController';
 import { PrismaSectionRepository } from '../../database/prisma/repositories/PrismaSectionRepository';
 import { GetSectionsByCourseIdUseCase } from '../../../domains/section/usecases/GetSectionsByCourseIdUseCase';
+import { authenticate } from '../middlewares/authenticate';
 
 const sectionRoutes = Router();
+
+// Aplicar autenticação a todas as rotas de sections
+sectionRoutes.use(authenticate);
 
 // Dependency Injection Manual
 const sectionRepository = new PrismaSectionRepository();

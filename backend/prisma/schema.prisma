@@ -117,3 +117,20 @@ model ScheduleItem {
 
   @@map("schedule_items")
 }
+
+// Tabela de Usuários (Autenticação)
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         UserRole @default(user)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum UserRole {
+  admin
+  user
+}

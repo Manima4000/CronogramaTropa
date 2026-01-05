@@ -11,8 +11,13 @@ import { PrismaSectionRepository } from '../../database/prisma/repositories/Pris
 import { PrismaLessonRepository } from '../../database/prisma/repositories/PrismaLessonRepository';
 import { PrismaVideoRepository } from '../../database/prisma/repositories/PrismaVideoRepository';
 import { PrismaClassroomRepository } from '../../database/prisma/repositories/PrismaClassroomRepository';
+import { authenticate } from '../middlewares/authenticate';
+import { authorize } from '../middlewares/authorize';
 
 const syncRoutes = Router();
+
+// Aplicar autenticação e autorização admin a todas as rotas de sync
+syncRoutes.use(authenticate, authorize('admin'));
 
 // Dependency Injection Manual
 const memberkitProvider = new MemberkitProvider();

@@ -6,8 +6,12 @@ import { GetLessonsBySectionIdUseCase } from '../../../domains/lesson/usecases/G
 import { GetLessonsByCourseIdUseCase } from '../../../domains/lesson/usecases/GetLessonsByCourseIdUseCase';
 import { GetLessonsWithVideosBySectionIdUseCase } from '../../../domains/lesson/usecases/GetLessonsWithVideosBySectionIdUseCase';
 import { GetLessonsWithVideosByCourseIdUseCase } from '../../../domains/lesson/usecases/GetLessonsWithVideosByCourseIdUseCase';
+import { authenticate } from '../middlewares/authenticate';
 
 const lessonRoutes = Router();
+
+// Aplicar autenticação a todas as rotas de lessons
+lessonRoutes.use(authenticate);
 
 // Dependency Injection Manual
 const lessonRepository = new PrismaLessonRepository();

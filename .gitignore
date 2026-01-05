@@ -38,3 +38,6 @@ Thumbs.db
 # Testes
 jest-cache/
 jest-temp/
+
+# Seed
+backend/prisma/seed.ts

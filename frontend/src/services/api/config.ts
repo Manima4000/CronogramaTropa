@@ -4,4 +4,5 @@ export const API_CONFIG = {
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Enable cookies for authentication
 };

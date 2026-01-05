@@ -11,8 +11,12 @@ import { ListSchedulesUseCase } from '../../../domains/schedule/usecases/ListSch
 import { DeleteScheduleUseCase } from '../../../domains/schedule/usecases/DeleteScheduleUseCase';
 import { ExportScheduleToPDFUseCase } from '../../../domains/schedule/usecases/ExportScheduleToPDFUseCase';
 import { PDFProvider } from '../../providers/pdf/PDFProvider';
+import { authenticate } from '../middlewares/authenticate';
 
 const scheduleRoutes = Router();
+
+// Aplicar autenticação a todas as rotas de schedule
+scheduleRoutes.use(authenticate);
 
 // Dependency Injection Manual (Inversão de Dependência - SOLID)
 // Em projetos maiores, usar container de DI como TSyringe ou InversifyJS

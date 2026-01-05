@@ -3,8 +3,12 @@ import { CourseController } from '../controllers/CourseController';
 import { PrismaCourseRepository } from '../../database/prisma/repositories/PrismaCourseRepository';
 import { ListAllCoursesUseCase } from '../../../domains/course/usecases/ListAllCoursesUseCase';
 import { GetCourseByIdUseCase } from '../../../domains/course/usecases/GetCourseByIdUseCase';
+import { authenticate } from '../middlewares/authenticate';
 
 const courseRoutes = Router();
+
+// Aplicar autenticação a todas as rotas de cursos
+courseRoutes.use(authenticate);
 
 // Dependency Injection Manual
 const courseRepository = new PrismaCourseRepository();

@@ -1,4 +1,9 @@
 export const ENDPOINTS = {
+  auth: {
+    login: '/api/auth/login',
+    logout: '/api/auth/logout',
+    me: '/api/auth/me',
+  },
   schedules: {
     base: '/api/schedules',
     byId: (id: number) => `/api/schedules/${id}`,
