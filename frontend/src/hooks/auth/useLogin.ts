@@ -22,8 +22,8 @@ export const useLogin = (): UseLoginReturn => {
       await authLogin(credentials);
       addToast({ message: 'Login realizado com sucesso!', type: 'success' });
       navigate('/');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login. Verifique suas credenciais.';
       addToast({ message: errorMessage, type: 'error' });
       throw error;
     } finally {

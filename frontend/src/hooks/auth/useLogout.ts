@@ -22,8 +22,8 @@ export const useLogout = (): UseLogoutReturn => {
       await authLogout();
       addToast({ message: 'Logout realizado com sucesso!', type: 'success' });
       navigate(ROUTES.login);
-    } catch (error: any) {
-      const errorMessage = error.message || 'Erro ao fazer logout';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer logout';
       addToast({ message: errorMessage, type: 'error' });
     } finally {
       setIsLoading(false);

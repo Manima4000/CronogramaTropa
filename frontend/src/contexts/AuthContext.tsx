@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
-      } catch (error) {
+      } catch {
         // User is not authenticated or token is invalid
         setUser(null);
       } finally {
@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
 

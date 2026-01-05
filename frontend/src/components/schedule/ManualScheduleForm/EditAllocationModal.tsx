@@ -29,16 +29,16 @@ export const EditAllocationModal: React.FC<EditAllocationModalProps> = ({
   onSave,
   onDelete,
 }) => {
+  // Use allocation values as initial state, will reset when component remounts
   const [startTime, setStartTime] = useState(allocation.startTime);
   const [duration, setDuration] = useState(allocation.duration);
 
-  // Resetar valores quando o modal abrir
+  // Reset values when allocation changes (form is reopened with different data)
   useEffect(() => {
-    if (isOpen) {
-      setStartTime(allocation.startTime);
-      setDuration(allocation.duration);
-    }
-  }, [isOpen, allocation]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStartTime(allocation.startTime);
+    setDuration(allocation.duration);
+  }, [allocation.startTime, allocation.duration, isOpen]);
 
   const handleSave = () => {
     // Validação básica

@@ -29,8 +29,10 @@ export const useWeekNavigation = ({
   });
 
   // Atualizar currentWeekStart quando startDate mudar
+  // This is intentional: we need to reset the week view when schedule dates change
   useEffect(() => {
     if (startDate) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentWeekStart(normalizeDate(startDate));
     }
   }, [startDate]);

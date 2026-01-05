@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   DndContext,
   type DragEndEvent,
+  type DragStartEvent,
   DragOverlay,
   PointerSensor,
   useSensor,
@@ -158,7 +159,7 @@ export const ManualScheduleForm: React.FC = () => {
   };
 
   // Handlers de Drag-and-Drop
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const lesson = active.data.current?.lesson;
     if (lesson) {

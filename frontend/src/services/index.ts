@@ -1,5 +1,5 @@
 import { httpClient } from './api/httpClient';
-import { ScheduleService } from './schedule/ScheduleService';
+import { ScheduleService } from './schedule/scheduleService';
 import { CourseService } from './course/CourseService';
 import { LessonService } from './lesson/LessonService';
 import { SectionService } from './section/SectionService';

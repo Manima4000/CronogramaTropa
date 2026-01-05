@@ -7,8 +7,8 @@ import { parseLocalDate, formatDateForInput, isValidDate } from '../../../utils/
 export const ScheduleBasicInfo: React.FC = () => {
   const { state, setBasicInfo, cleanOrphanedAllocations } = useManualSchedule();
 
-  const handleInputChange = (field: string, value: string | number | Date) => {
-    setBasicInfo({ [field]: value } as any);
+  const handleInputChange = (field: 'title' | 'description', value: string) => {
+    setBasicInfo({ [field]: value });
   };
 
   const handleDateChange = (field: 'startDate' | 'endDate', dateString: string) => {
@@ -35,7 +35,7 @@ export const ScheduleBasicInfo: React.FC = () => {
     }
 
     // Aplicar a mudança de data
-    setBasicInfo({ [field]: newDate } as any);
+    setBasicInfo({ [field]: newDate });
 
     // Limpar alocações órfãs após mudança de data
     // Aguardar próximo tick para garantir que o state foi atualizado
