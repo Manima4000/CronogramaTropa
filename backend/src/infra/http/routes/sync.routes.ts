@@ -13,11 +13,12 @@ import { PrismaVideoRepository } from '../../database/prisma/repositories/Prisma
 import { PrismaClassroomRepository } from '../../database/prisma/repositories/PrismaClassroomRepository';
 import { authenticate } from '../middlewares/authenticate';
 import { authorize } from '../middlewares/authorize';
+import { strictLimiter } from '../middlewares/rateLimiter';
 
 const syncRoutes = Router();
 
-// Aplicar autenticação e autorização admin a todas as rotas de sync
-syncRoutes.use(authenticate, authorize('admin'));
+// Aplicar rate limiting, autenticação e autorização admin a todas as rotas de sync
+syncRoutes.use(strictLimiter, authenticate, authorize('admin'));
 
 // Dependency Injection Manual
 const memberkitProvider = new MemberkitProvider();

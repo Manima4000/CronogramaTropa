@@ -35,36 +35,56 @@ const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = getAllowedOrigins();
 
-    // Permite requisições sem origin (ex: Postman, curl, mobile apps)
-    // Em produção, você pode querer desabilitar isso
-    if (!origin && process.env.NODE_ENV !== 'production') {
+    // Logs apenas em desenvolvimento
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[CORS] Request from origin: ${origin || 'NO ORIGIN'}`);
+      console.log(`[CORS] Allowed origins:`, allowedOrigins);
+    }
+
+    // Em produção, permitimos se estiver na lista ou se a requisição for do mesmo domínio
+    if (!origin || allowedOrigins.includes(origin)) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[CORS] ✅ Allowing origin: ${origin || 'NO ORIGIN'}`);
+      }
       return callback(null, true);
     }
 
-    // Verifica se o origin está na lista de permitidos
-    if (origin && allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`🚫 CORS blocked request from origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
+    // Log de segurança sempre (para detectar tentativas de ataque)
+    console.warn(`[SECURITY] 🚫 CORS blocked request from origin: ${origin}`);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true, // Permite envio de cookies
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Métodos permitidos
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Adiciona OPTIONS explicitamente
   allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+  exposedHeaders: ['Set-Cookie'], // Expõe cookies
   maxAge: 86400, // Cache preflight por 24h
+  preflightContinue: false, // Não continua após preflight (deixa CORS lidar)
+  optionsSuccessStatus: 204, // Status para OPTIONS
 };
 
 // Aplicar CORS
 app.use(cors(corsOptions));
 
-// Log de segurança em produção
+// Log de configuração no startup (apenas desenvolvimento)
+if (process.env.NODE_ENV !== 'production') {
+  console.log('\n🔧 Environment Configuration:');
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+  console.log(`   FRONTEND_URL: ${process.env.FRONTEND_URL || 'not set'}`);
+  console.log(`   PORT_BACKEND: ${PORT_BACKEND}`);
+  console.log(`   Allowed Origins:`, getAllowedOrigins());
+}
+
+// Log de segurança em produção (apenas avisos críticos)
 if (process.env.NODE_ENV === 'production') {
   if (!process.env.FRONTEND_URL) {
-    console.error('⚠️  WARNING: FRONTEND_URL not set in production!');
-  } else {
-    console.log(`✅ CORS configured for: ${process.env.FRONTEND_URL}`);
+    console.error('⚠️  CRITICAL: FRONTEND_URL not set in production!');
+    process.exit(1); // Não inicia o servidor sem essa configuração
   }
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+    console.error('⚠️  CRITICAL: JWT_SECRET not set or too weak!');
+    process.exit(1);
+  }
+  console.log('✅ Production server starting with secure configuration');
 }
 
 app.use(express.json());

@@ -8,6 +8,7 @@ import { BcryptHashProvider } from '../../providers/auth/BcryptHashProvider';
 import { JWTProvider } from '../../providers/auth/JWTProvider';
 import { authenticate } from '../middlewares/authenticate';
 import { authorize } from '../middlewares/authorize';
+import { loginLimiter, registerLimiter } from '../middlewares/rateLimiter';
 
 const authRoutes = Router();
 
@@ -82,7 +83,7 @@ const authController = new AuthController(
  *       401:
  *         description: Invalid credentials
  */
-authRoutes.post('/login', (req, res, next) => authController.login(req, res, next));
+authRoutes.post('/login', loginLimiter, (req, res, next) => authController.login(req, res, next));
 
 /**
  * @swagger
@@ -160,6 +161,7 @@ authRoutes.get('/me', authenticate, (req, res, next) => authController.me(req, r
  */
 authRoutes.post(
   '/register',
+  registerLimiter,
   authenticate,
   authorize('admin'),
   (req, res, next) => authController.register(req, res, next)
